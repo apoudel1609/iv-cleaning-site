@@ -1,2154 +1,666 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover"/>
-  <meta name="mobile-web-app-capable" content="yes"/>
-  <meta name="apple-mobile-web-app-capable" content="yes"/>
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
-  <meta name="apple-mobile-web-app-title" content="ARIA"/>
-  <meta name="theme-color" content="#0e0d0b"/>
-  <title>ARIA — Calendar</title>
-  <link rel="manifest" href="manifest.json"/>
-  <link rel="preconnect" href="https://fonts.googleapis.com"/>
-  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet"/>
-  <style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --bg0:#0e0d0b;--bg1:#161410;--bg2:#1e1b15;--bg3:#28241c;
-  --gold:#f0a500;--gold2:#ffc740;--amber:#c97d00;
-  --muted:#6b6255;--muted2:#3d3628;
-  --text:#ede0cc;--text2:#c4b49a;
-  --red:#d95f5f;--green:#68b584;--blue:#5b9bd5;--purple:#9b7fe8;--teal:#4ab8a0;
-  --border:rgba(240,165,0,.10);--border2:rgba(240,165,0,.24);
-  --st:env(safe-area-inset-top,0px);--sb:env(safe-area-inset-bottom,0px);
-}
-html,body{background:var(--bg0);color:var(--text);font-family:'Syne',sans-serif;
-  height:100%;width:100%;overflow:hidden;-webkit-font-smoothing:antialiased}
-#root{width:100vw;height:100dvh;display:flex;flex-direction:column;
-  background:var(--bg0);
-  background-image:radial-gradient(ellipse 55% 35% at 75% 5%,rgba(240,165,0,.05) 0%,transparent 60%),
-                   radial-gradient(ellipse 35% 55% at 5% 95%,rgba(200,120,0,.03) 0%,transparent 55%)}
-::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:transparent}
-::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
-button{font-family:'Syne',sans-serif;cursor:pointer}
-input,textarea,select{font-family:'Syne',sans-serif}
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IV Cleaning Services — Isabel Velazquez | Professional Cleaning</title>
+<meta name="description" content="Reliable, detailed professional cleaning for homes, offices, apartments and short-term rentals across the Greater New Orleans area. Get an instant estimate and book Isabel Velazquez today. (504) 699-6394.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=Karla:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --pine:#0E3B36;
+    --pine-deep:#092A26;
+    --mist:#F2F7F5;
+    --mint:#8FDFCB;
+    --mint-soft:#DDF2EB;
+    --zest:#F4B542;
+    --ink:#14231F;
+    --muted:#5B6E68;
+    --white:#FFFFFF;
+    --radius:18px;
+    --shadow:0 10px 30px rgba(14,59,54,.10);
+    --display:'Bricolage Grotesque',sans-serif;
+    --body:'Karla',sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  @media (prefers-reduced-motion:reduce){
+    html{scroll-behavior:auto}
+    *,*::before,*::after{animation:none!important;transition:none!important}
+  }
+  body{
+    font-family:var(--body);
+    color:var(--ink);
+    background:var(--mist);
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  img{max-width:100%}
+  a{color:inherit}
+  :focus-visible{outline:3px solid var(--zest);outline-offset:2px;border-radius:6px}
 
-/* TOP BAR */
-#topbar{display:flex;align-items:center;flex-shrink:0;
-  padding:0 24px;border-bottom:1px solid var(--border);
-  background:rgba(14,13,11,.96);backdrop-filter:blur(16px);
-  padding-top:var(--st);position:relative;z-index:20;height:calc(60px + var(--st))}
-.tb-logo{font-size:18px;font-weight:800;color:var(--gold);letter-spacing:5px;margin-right:20px}
-.tb-sep{width:1px;height:26px;background:var(--border2);margin:0 16px;flex-shrink:0}
-.tb-date{font-size:12px;font-weight:600;color:var(--muted);letter-spacing:2px;text-transform:uppercase}
-.tb-spacer{flex:1}
-.tb-clock{font-family:'DM Mono',monospace;font-size:28px;color:var(--text);letter-spacing:2px}
-.tb-clock .colon{animation:blink 1s step-end infinite}
-.tb-sec{font-size:16px;color:var(--muted)}
-@keyframes blink{50%{opacity:0}}
-.tb-nav{display:flex;gap:3px;margin-left:16px}
-.tb-vbtn{background:none;border:1px solid var(--border);color:var(--muted);
-  padding:5px 12px;border-radius:6px;font-size:10px;font-weight:700;
-  letter-spacing:2px;text-transform:uppercase;transition:all .2s}
-.tb-vbtn.active{border-color:var(--gold);color:var(--gold);background:rgba(240,165,0,.08)}
-.tb-vbtn:hover:not(.active){border-color:var(--border2);color:var(--text2)}
-.tb-today{background:none;border:1px solid var(--border2);color:var(--gold2);
-  padding:5px 14px;border-radius:6px;font-size:10px;font-weight:700;
-  letter-spacing:2px;text-transform:uppercase;transition:all .2s;margin-left:6px}
-.tb-today:hover{background:rgba(240,165,0,.1)}
-.tb-settings{background:none;border:none;color:var(--muted);font-size:18px;
-  padding:6px;margin-left:8px;border-radius:6px;transition:color .2s}
-.tb-settings:hover{color:var(--text)}
-@media(max-width:767px){
-  .tb-clock{display:none}.tb-sec{display:none}
-  .tb-sep{display:none}.tb-date{display:none}
-  .tb-today{display:none}.tb-nav{display:none}
-  .tb-spacer{display:none}
-  #topbar{display:none}
-  #root{padding-top:0}
-}
+  /* ---------- Header ---------- */
+  header{
+    position:sticky;top:0;z-index:50;
+    background:rgba(242,247,245,.92);
+    backdrop-filter:blur(8px);
+    border-bottom:1px solid rgba(14,59,54,.08);
+  }
+  .nav{
+    max-width:1080px;margin:0 auto;
+    display:flex;align-items:center;justify-content:space-between;
+    padding:.8rem 1.25rem;
+  }
+  .brand{display:flex;align-items:center;gap:.6rem;text-decoration:none}
+  .brand-mark{
+    width:38px;height:38px;border-radius:10px;
+    background:var(--pine);color:var(--mint);
+    display:grid;place-items:center;
+    font-family:var(--display);font-weight:800;font-size:.95rem;letter-spacing:.5px;
+  }
+  .brand-name{font-family:var(--display);font-weight:600;font-size:1rem;line-height:1.1}
+  .brand-name small{display:block;font-family:var(--body);font-weight:500;font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+  .nav-links{display:none;gap:1.5rem;list-style:none}
+  .nav-links a{text-decoration:none;font-weight:500;font-size:.95rem;color:var(--muted)}
+  .nav-links a:hover{color:var(--pine)}
+  .nav-call{
+    display:inline-flex;align-items:center;gap:.45rem;
+    background:var(--pine);color:var(--white);
+    padding:.55rem 1rem;border-radius:999px;
+    text-decoration:none;font-weight:700;font-size:.9rem;
+    transition:background .2s;
+  }
+  .nav-call:hover{background:var(--pine-deep)}
+  @media(min-width:760px){.nav-links{display:flex}}
 
-/* BODY */
-#body{display:flex;flex:1;overflow:hidden}
+  /* ---------- Hero ---------- */
+  .hero{
+    max-width:1080px;margin:0 auto;
+    padding:3rem 1.25rem 3.5rem;
+    display:grid;gap:2.25rem;
+  }
+  .eyebrow{
+    display:inline-flex;align-items:center;gap:.5rem;
+    font-size:.75rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;
+    color:var(--pine);
+  }
+  .eyebrow::before{content:"";width:26px;height:2px;background:var(--zest)}
+  .hero h1{
+    font-family:var(--display);font-weight:800;
+    font-size:clamp(2.3rem,7vw,4rem);
+    line-height:1.04;letter-spacing:-.02em;
+    color:var(--pine-deep);
+    margin:.9rem 0 1rem;
+  }
+  .hero h1 em{font-style:normal;color:var(--pine);position:relative;white-space:nowrap}
+  .hero h1 em::after{
+    content:"";position:absolute;left:0;right:0;bottom:.08em;height:.32em;
+    background:var(--mint);z-index:-1;border-radius:3px;
+  }
+  .hero p.lede{font-size:1.1rem;color:var(--muted);max-width:34rem}
+  .hero-ctas{display:flex;flex-wrap:wrap;gap:.8rem;margin-top:1.6rem}
+  .btn{
+    display:inline-flex;align-items:center;justify-content:center;gap:.5rem;
+    padding:.85rem 1.5rem;border-radius:999px;
+    font-family:var(--body);font-weight:700;font-size:1rem;
+    text-decoration:none;border:none;cursor:pointer;
+    transition:transform .15s,background .2s,box-shadow .2s;
+  }
+  .btn-primary{background:var(--zest);color:var(--pine-deep);box-shadow:0 6px 18px rgba(244,181,66,.35)}
+  .btn-primary:hover{transform:translateY(-2px)}
+  .btn-ghost{background:transparent;color:var(--pine);border:2px solid var(--pine)}
+  .btn-ghost:hover{background:var(--pine);color:var(--white)}
+  .hero-points{
+    display:flex;flex-wrap:wrap;gap:.6rem;margin-top:1.8rem;list-style:none;
+  }
+  .hero-points li{
+    background:var(--white);border:1px solid rgba(14,59,54,.1);
+    padding:.45rem .9rem;border-radius:999px;
+    font-size:.85rem;font-weight:500;color:var(--pine);
+    display:inline-flex;align-items:center;gap:.4rem;
+  }
+  .hero-points li::before{content:"✓";color:var(--zest);font-weight:800}
 
-/* SIDEBAR - TV/Desktop only */
-#sidebar{width:272px;flex-shrink:0;display:flex;flex-direction:column;
-  border-right:1px solid var(--border);background:rgba(14,13,11,.9);
-  padding:18px 14px 14px;gap:16px;overflow:hidden}
-@media(max-width:1023px){#sidebar{display:none}}
-.sb-lbl{font-size:9px;font-weight:700;letter-spacing:3px;color:var(--muted2);text-transform:uppercase}
+  /* ---------- Section shells ---------- */
+  section{padding:3.5rem 1.25rem}
+  .wrap{max-width:1080px;margin:0 auto}
+  .section-head{max-width:38rem;margin-bottom:2.2rem}
+  .section-head h2{
+    font-family:var(--display);font-weight:800;
+    font-size:clamp(1.7rem,4.5vw,2.4rem);
+    color:var(--pine-deep);letter-spacing:-.01em;margin:.7rem 0 .6rem;
+  }
+  .section-head p{color:var(--muted)}
 
-/* ORB */
-.orb-wrap{display:flex;flex-direction:column;align-items:center;gap:8px}
-.orb-outer{position:relative;width:136px;height:136px;cursor:pointer;flex-shrink:0}
-.orb-ring{position:absolute;border-radius:50%;border:1px solid transparent;
-  width:100%;height:100%;top:0;left:0}
-.orb-outer.listening .orb-ring:nth-child(1){border-color:rgba(240,165,0,.5);animation:rp 1.5s ease-out infinite}
-.orb-outer.listening .orb-ring:nth-child(2){border-color:rgba(240,165,0,.3);animation:rp 1.5s ease-out .28s infinite}
-.orb-outer.listening .orb-ring:nth-child(3){border-color:rgba(240,165,0,.15);animation:rp 1.5s ease-out .56s infinite}
-@keyframes rp{0%{transform:scale(.88);opacity:.9}100%{transform:scale(1.3);opacity:0}}
-.orb-btn{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
-  width:72px;height:72px;border-radius:50%;border:2px solid var(--border2);
-  background:radial-gradient(circle at 36% 30%,rgba(240,165,0,.13),rgba(14,13,11,.8));
-  display:flex;align-items:center;justify-content:center;
-  transition:all .3s;box-shadow:0 0 20px rgba(240,165,0,.06)}
-.orb-btn:hover{border-color:var(--gold);box-shadow:0 0 28px rgba(240,165,0,.18)}
-.orb-btn.active{border-color:var(--gold);box-shadow:0 0 36px rgba(240,165,0,.32);
-  background:radial-gradient(circle at 36% 30%,rgba(240,165,0,.22),rgba(14,13,11,.7));
-  animation:breathe 1.8s ease-in-out infinite}
-@keyframes breathe{0%,100%{box-shadow:0 0 28px rgba(240,165,0,.25)}50%{box-shadow:0 0 48px rgba(240,165,0,.42)}}
-.orb-icon{font-size:26px;user-select:none}
-.orb-status{font-size:10px;font-weight:700;letter-spacing:2px;color:var(--muted);
-  text-transform:uppercase;text-align:center;transition:color .3s}
-.orb-status.on{color:var(--gold)}.orb-status.proc{color:var(--amber)}
+  /* ---------- Services ---------- */
+  .services{background:var(--white)}
+  .svc-grid{display:grid;gap:1rem;grid-template-columns:1fr}
+  @media(min-width:640px){.svc-grid{grid-template-columns:repeat(2,1fr)}}
+  @media(min-width:960px){.svc-grid{grid-template-columns:repeat(4,1fr)}}
+  .svc{
+    background:var(--mist);border-radius:var(--radius);
+    padding:1.4rem;border:1px solid rgba(14,59,54,.07);
+  }
+  .svc .icon{
+    width:44px;height:44px;border-radius:12px;
+    background:var(--mint-soft);display:grid;place-items:center;
+    font-size:1.3rem;margin-bottom:.9rem;
+  }
+  .svc h3{font-family:var(--display);font-weight:600;font-size:1.05rem;color:var(--pine-deep);margin-bottom:.35rem}
+  .svc p{font-size:.9rem;color:var(--muted)}
 
-/* WAVE */
-.wave{display:flex;align-items:center;justify-content:center;gap:3px;height:26px}
-.wb{width:3px;border-radius:2px;background:var(--muted2);height:5px}
-.wave.on .wb{background:var(--gold)}
-.wave.on .wb:nth-child(1){animation:wv .65s ease-in-out infinite alternate}
-.wave.on .wb:nth-child(2){animation:wv .5s .1s ease-in-out infinite alternate}
-.wave.on .wb:nth-child(3){animation:wv .8s .05s ease-in-out infinite alternate}
-.wave.on .wb:nth-child(4){animation:wv .5s .2s ease-in-out infinite alternate}
-.wave.on .wb:nth-child(5){animation:wv .7s .12s ease-in-out infinite alternate}
-.wave.on .wb:nth-child(6){animation:wv .45s .08s ease-in-out infinite alternate}
-.wave.on .wb:nth-child(7){animation:wv .6s infinite alternate}
-@keyframes wv{from{height:4px}to{height:22px}}
+  /* ---------- Estimator ---------- */
+  .estimator{background:var(--pine);color:var(--mist)}
+  .estimator .section-head h2{color:var(--white)}
+  .estimator .section-head p{color:var(--mint-soft)}
+  .estimator .eyebrow{color:var(--mint)}
+  .est-grid{display:grid;gap:1.5rem}
+  @media(min-width:880px){.est-grid{grid-template-columns:1.1fr .9fr;align-items:start}}
+  .est-controls{
+    background:rgba(255,255,255,.06);
+    border:1px solid rgba(255,255,255,.12);
+    border-radius:var(--radius);padding:1.5rem;
+    display:grid;gap:1.25rem;
+  }
+  .field label{display:block;font-weight:700;font-size:.9rem;margin-bottom:.45rem;color:var(--white)}
+  .field .hint{font-weight:400;color:var(--mint-soft);font-size:.8rem;margin-left:.3rem}
+  .field select,.field input[type=number]{
+    width:100%;padding:.75rem .9rem;
+    border-radius:12px;border:1px solid rgba(255,255,255,.25);
+    background:var(--white);color:var(--ink);
+    font-family:var(--body);font-size:1rem;
+  }
+  .field input[type=range]{width:100%;accent-color:var(--zest);margin-top:.3rem}
+  .range-row{display:flex;justify-content:space-between;font-size:.8rem;color:var(--mint-soft);margin-top:.2rem}
+  .stepper{display:flex;align-items:center;gap:.9rem}
+  .stepper button{
+    width:42px;height:42px;border-radius:50%;
+    border:1px solid rgba(255,255,255,.3);background:transparent;
+    color:var(--white);font-size:1.3rem;font-weight:700;cursor:pointer;
+    transition:background .15s;
+  }
+  .stepper button:hover{background:rgba(255,255,255,.12)}
+  .stepper output{font-family:var(--display);font-weight:600;font-size:1.3rem;min-width:2ch;text-align:center}
+  .toggle{display:flex;align-items:flex-start;gap:.7rem;cursor:pointer}
+  .toggle input{width:20px;height:20px;accent-color:var(--zest);margin-top:.15rem;flex-shrink:0}
+  .toggle span{font-size:.95rem}
+  .toggle small{display:block;color:var(--mint-soft);font-size:.8rem}
 
-.transcript{background:rgba(240,165,0,.04);border:1px solid var(--border);
-  border-radius:8px;padding:10px 12px;min-height:42px}
-.transcript-txt{font-size:12px;line-height:1.5;color:var(--gold2);font-family:'DM Mono',monospace}
-.transcript-ph{font-size:12px;color:var(--muted2);font-style:italic}
-.response{background:var(--bg1);border:1px solid var(--border);border-left:3px solid var(--gold);
-  border-radius:8px;padding:11px 13px;flex:1;overflow-y:auto;min-height:70px}
-.response-txt{font-size:13px;line-height:1.6;color:var(--text2)}
-.proc-row{display:flex;align-items:center;gap:8px;color:var(--amber);font-size:12px;font-family:'DM Mono',monospace}
-.spin{width:12px;height:12px;border:2px solid rgba(201,125,0,.2);border-top-color:var(--amber);
-  border-radius:50%;animation:spin .7s linear infinite}
-@keyframes spin{to{transform:rotate(360deg)}}
-.qcmds{display:flex;flex-direction:column;gap:4px}
-.qcmd{background:none;border:1px solid var(--border);border-radius:6px;
-  padding:6px 10px;text-align:left;transition:all .2s;color:var(--muted);font-size:11px;font-weight:600}
-.qcmd:hover{border-color:var(--border2);color:var(--text2);background:rgba(240,165,0,.04)}
+  /* Receipt (signature element) */
+  .receipt{
+    background:var(--white);color:var(--ink);
+    border-radius:6px;
+    box-shadow:0 16px 40px rgba(0,0,0,.28);
+    padding:1.75rem 1.5rem 2.2rem;
+    position:relative;
+    font-variant-numeric:tabular-nums;
+  }
+  .receipt::after{
+    content:"";position:absolute;left:0;right:0;bottom:-1px;height:14px;
+    background:
+      linear-gradient(-45deg,transparent 74%,var(--white) 76%) 0 0/14px 14px repeat-x,
+      linear-gradient(45deg,transparent 74%,var(--white) 76%) 7px 0/14px 14px repeat-x;
+    transform:translateY(100%);
+  }
+  .receipt-head{
+    text-align:center;border-bottom:2px dashed rgba(14,59,54,.2);
+    padding-bottom:1rem;margin-bottom:1rem;
+  }
+  .receipt-head .rc-brand{font-family:var(--display);font-weight:800;letter-spacing:.05em;color:var(--pine)}
+  .receipt-head small{color:var(--muted);letter-spacing:.16em;text-transform:uppercase;font-size:.68rem}
+  .rc-line{display:flex;justify-content:space-between;gap:1rem;font-size:.95rem;padding:.3rem 0}
+  .rc-line span:first-child{color:var(--muted)}
+  .rc-line span:last-child{font-weight:700}
+  .rc-total{
+    border-top:2px dashed rgba(14,59,54,.2);
+    margin-top:.9rem;padding-top:1rem;
+    display:flex;justify-content:space-between;align-items:baseline;
+  }
+  .rc-total .label{font-weight:700;letter-spacing:.1em;text-transform:uppercase;font-size:.8rem;color:var(--muted)}
+  .rc-total .amount{font-family:var(--display);font-weight:800;font-size:2.6rem;color:var(--pine);line-height:1}
+  .rc-note{font-size:.78rem;color:var(--muted);margin-top:1rem;text-align:center}
+  .receipt .btn{width:100%;margin-top:1.2rem}
 
-/* CALENDAR AREA */
-#calarea{flex:1;display:flex;flex-direction:column;padding:14px 18px 10px;gap:8px;overflow:hidden}
-.cal-hdr{display:flex;align-items:center;gap:10px;flex-shrink:0}
-.cal-mnav{background:none;border:1px solid var(--border2);color:var(--gold);
-  width:28px;height:28px;border-radius:6px;font-size:15px;
-  display:flex;align-items:center;justify-content:center;transition:all .2s}
-.cal-mnav:hover{background:rgba(240,165,0,.09)}
-.cal-title{font-size:20px;font-weight:800;color:var(--text);min-width:200px}
-.cal-year{color:var(--gold);margin-left:6px}
-.cal-hdr-sp{flex:1}
-.cal-add{background:var(--gold);border:none;border-radius:8px;
-  padding:7px 16px;font-size:12px;font-weight:700;color:var(--bg0);letter-spacing:1px;transition:background .2s}
-.cal-add:hover{background:var(--gold2)}
-.day-hdrs{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;flex-shrink:0}
-.dhdr{text-align:center;font-size:9px;font-weight:700;letter-spacing:2px;
-  color:var(--muted);padding:3px 0;text-transform:uppercase}
-.dhdr.wk{color:rgba(224,123,0,.45)}
-.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;flex:1;min-height:0}
-.cell{background:var(--bg1);border:1px solid var(--border);border-radius:8px;
-  padding:5px 5px 5px 5px;display:flex;flex-direction:column;overflow:hidden;
-  transition:border-color .2s,background .2s;cursor:pointer;min-height:0;position:relative}
-.cell:hover:not(.empty){border-color:var(--border2);background:var(--bg2)}
-.cell.empty{background:rgba(14,13,11,.4);border-color:rgba(240,165,0,.04);cursor:default}
-.cell.today{border-color:var(--gold);background:rgba(240,165,0,.06);
-  box-shadow:0 0 14px rgba(240,165,0,.08)}
-.cell.wknd{background:rgba(14,13,11,.85)}
-.cell-num{font-family:'DM Mono',monospace;font-size:11px;font-weight:700;
-  color:var(--muted);line-height:1.6;flex-shrink:0;
-  display:inline-flex;align-items:center;justify-content:center;
-  width:20px;height:20px;border-radius:50%;margin-bottom:3px}
-.cell.today .cell-num{color:var(--bg0);background:var(--gold);text-shadow:none}
-.cell-evts{display:flex;flex-direction:column;gap:2px;overflow:hidden;flex:1}
-.chip{font-size:10px;padding:2px 5px;border-radius:3px;white-space:nowrap;
-  overflow:hidden;text-overflow:ellipsis;font-weight:600;line-height:1.4;flex-shrink:0}
-.chip.c0{background:rgba(91,155,213,.2);color:#8ec4f0;border-left:2px solid var(--blue)}
-.chip.c1{background:rgba(155,127,232,.2);color:#c4a8ff;border-left:2px solid var(--purple)}
-.chip.c2{background:rgba(104,181,132,.2);color:#8dd4aa;border-left:2px solid var(--green)}
-.chip.c3{background:rgba(240,165,0,.2);color:var(--gold2);border-left:2px solid var(--gold)}
-.chip.c4{background:rgba(217,95,95,.2);color:#f0a0a0;border-left:2px solid var(--red)}
-.chip.c5{background:rgba(74,184,160,.2);color:#7ee8d0;border-left:2px solid var(--teal)}
-.chip-more{font-size:10px;color:var(--muted);padding:1px 4px}
+  /* ---------- Contact / form ---------- */
+  .contact{background:var(--white)}
+  .contact-grid{display:grid;gap:2rem}
+  @media(min-width:880px){.contact-grid{grid-template-columns:.85fr 1.15fr}}
+  .contact-info h2{font-family:var(--display);font-weight:800;font-size:clamp(1.7rem,4.5vw,2.3rem);color:var(--pine-deep);margin:.7rem 0 .8rem}
+  .contact-info p{color:var(--muted);margin-bottom:1.4rem}
+  .info-card{
+    background:var(--mist);border-radius:var(--radius);
+    padding:1.2rem 1.3rem;margin-bottom:.9rem;
+    border:1px solid rgba(14,59,54,.07);
+  }
+  .info-card strong{display:block;font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:.25rem}
+  .info-card a{font-family:var(--display);font-weight:600;font-size:1.15rem;color:var(--pine);text-decoration:none}
+  .info-card a:hover{text-decoration:underline}
+  form.intake{
+    background:var(--mist);border-radius:var(--radius);
+    padding:1.6rem;border:1px solid rgba(14,59,54,.08);
+    display:grid;gap:1.1rem;
+  }
+  .form-row{display:grid;gap:1.1rem}
+  @media(min-width:560px){.form-row{grid-template-columns:1fr 1fr}}
+  form.intake label{font-weight:700;font-size:.9rem;display:block;margin-bottom:.4rem;color:var(--pine-deep)}
+  form.intake input,form.intake select,form.intake textarea{
+    width:100%;padding:.8rem .95rem;
+    border-radius:12px;border:1px solid rgba(14,59,54,.18);
+    background:var(--white);font-family:var(--body);font-size:1rem;color:var(--ink);
+  }
+  form.intake textarea{resize:vertical;min-height:110px}
+  form.intake input:focus,form.intake select:focus,form.intake textarea:focus{
+    outline:none;border-color:var(--pine);box-shadow:0 0 0 3px var(--mint-soft);
+  }
+  .req{color:#C4472F}
 
-/* WEEK VIEW */
-.week-grid{flex:1;display:grid;grid-template-columns:52px repeat(7,1fr);overflow-y:auto;min-height:0}
-.wk-time{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);
-  text-align:right;padding-right:8px;padding-top:4px;border-right:1px solid var(--border);border-bottom:1px solid var(--border)}
-.wk-day-hdr{border-bottom:1px solid var(--border);border-right:1px solid var(--border);
-  padding:8px 4px;text-align:center;position:sticky;top:0;background:var(--bg0);z-index:5}
-.wk-day-name{font-size:9px;font-weight:700;letter-spacing:2px;color:var(--muted);text-transform:uppercase}
-.wk-day-num{font-family:'DM Mono',monospace;font-size:18px;color:var(--text);margin-top:2px}
-.wk-day-num.today-num{color:var(--gold)}
-.wk-cell{border-right:1px solid var(--border);border-bottom:1px solid var(--border);
-  min-height:38px;padding:2px 3px;cursor:pointer;transition:background .15s}
-.wk-cell:hover{background:var(--bg2)}
-.wk-chip{font-size:10px;border-radius:3px;padding:2px 4px;margin-bottom:2px;
-  font-weight:600;cursor:pointer;line-height:1.4;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--text2)}
+  /* ---------- Footer ---------- */
+  footer{background:var(--pine-deep);color:var(--mint-soft);padding:2.5rem 1.25rem}
+  .foot{max-width:1080px;margin:0 auto;display:grid;gap:1.5rem}
+  @media(min-width:700px){.foot{grid-template-columns:1fr auto;align-items:center}}
+  .foot .brand-name{color:var(--white)}
+  .foot .brand-name small{color:var(--mint)}
+  .foot-meta{font-size:.85rem;line-height:2}
+  .foot-meta a{color:var(--mint);text-decoration:none;font-weight:700}
 
-/* DAY VIEW */
-.day-view{flex:1;overflow-y:auto;display:flex;flex-direction:column;min-height:0}
-.day-row{display:flex;border-bottom:1px solid var(--border);min-height:46px}
-.day-time{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);
-  width:52px;padding:6px 8px 0 0;text-align:right;flex-shrink:0;border-right:1px solid var(--border)}
-.day-slot{flex:1;padding:4px 8px;display:flex;flex-direction:column;gap:2px;cursor:pointer;transition:background .15s}
-.day-slot:hover{background:var(--bg2)}
-.day-chip{font-size:12px;border-radius:5px;padding:4px 8px;font-weight:600;cursor:pointer;color:var(--text)}
-
-/* MOBILE MONTH GRID */
-.mob-month-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;padding:8px 8px 110px}
-.mob-cell{background:var(--bg1);border:1px solid var(--border);border-radius:6px;
-  padding:4px 3px;min-height:52px;display:flex;flex-direction:column;cursor:pointer;
-  transition:border-color .2s;align-items:flex-start}
-.mob-cell:active{border-color:var(--border2);background:var(--bg2)}
-.mob-cell.mob-empty{background:rgba(14,13,11,.4);border-color:rgba(240,165,0,.04);cursor:default}
-.mob-cell.mob-today{border-color:var(--gold);background:rgba(240,165,0,.07)}
-.mob-cell.mob-wknd{background:rgba(14,13,11,.85)}
-.mob-cell-num{font-family:'DM Mono',monospace;font-size:11px;font-weight:700;
-  color:var(--muted);line-height:1.6;flex-shrink:0;
-  display:inline-flex;align-items:center;justify-content:center;
-  width:20px;height:20px;border-radius:50%;margin-bottom:2px}
-.mob-cell.mob-today .mob-cell-num{color:var(--bg0);background:var(--gold)}
-.mob-cell-dots{display:flex;flex-wrap:wrap;gap:2px;overflow:hidden;padding:0 2px}
-.mob-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0}
-.mob-chip-sm{font-size:9px;border-radius:2px;padding:1px 3px;white-space:nowrap;
-  overflow:hidden;text-overflow:ellipsis;width:100%;font-weight:600;line-height:1.4}
-
-/* MOBILE */
-@media(max-width:767px){
-  #calarea{display:none}
-  #mobile-view{display:-webkit-box;display:-webkit-flex;display:flex}
-  #fab{display:none}
-  #mob-mic{display:-webkit-box;display:-webkit-flex;display:flex !important}
-}
-@media(min-width:768px){
-  #mobile-view{display:none}
-  #fab{display:none}
-  #mob-mic{display:none !important}
-}
-
-/* ── Mobile wrapper ── */
-#mobile-view{
-  flex-direction:column;overflow:hidden;flex:1;min-height:0;
-}
-
-/* ── Mobile header ── */
-.mob-header{
-  background:rgba(14,13,11,.97);border-bottom:1px solid var(--border);
-  flex-shrink:0;padding-top:var(--st);
-}
-.mob-header-row1{
-  display:flex;align-items:center;gap:10px;padding:12px 16px 8px;
-}
-.mob-logo{font-size:16px;font-weight:800;color:var(--gold);letter-spacing:4px}
-.mob-nav-group{display:flex;align-items:center;gap:4px;flex:1;justify-content:center}
-.mob-month-label{font-size:16px;font-weight:800;color:var(--text);min-width:130px;text-align:center}
-.mob-year-label{color:var(--gold)}
-.mob-nav-btn{background:none;border:1px solid var(--border2);color:var(--gold);
-  width:30px;height:30px;border-radius:8px;font-size:16px;
-  display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.mob-nav-btn:active{background:rgba(240,165,0,.12)}
-.mob-header-actions{display:flex;gap:6px;align-items:center}
-.mob-today-btn{background:none;border:1px solid var(--border2);color:var(--gold2);
-  padding:5px 10px;border-radius:7px;font-size:10px;font-weight:700;letter-spacing:1px}
-.mob-today-btn:active{background:rgba(240,165,0,.1)}
-.mob-add-btn{background:var(--gold);border:none;color:var(--bg0);
-  padding:6px 12px;border-radius:7px;font-size:11px;font-weight:700;letter-spacing:.5px}
-.mob-add-btn:active{background:var(--gold2)}
-.mob-settings-btn{background:none;border:none;color:var(--muted);font-size:18px;padding:4px}
-
-/* ── Mobile view tabs ── */
-.mob-tabs{display:flex;gap:0;padding:0 16px 10px;gap:6px}
-.mob-tab{flex:1;background:none;border:1px solid var(--border);border-radius:8px;
-  color:var(--muted);font-size:11px;font-weight:700;letter-spacing:1px;
-  padding:7px 0;text-transform:uppercase;transition:all .2s;text-align:center}
-.mob-tab.active{border-color:var(--gold);color:var(--gold);background:rgba(240,165,0,.08)}
-.mob-tab:active:not(.active){background:rgba(240,165,0,.04)}
-
-/* ── Mobile agenda area ── */
-.mob-agenda{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:0 0 160px}
-
-/* ── Mobile month grid ── */
-.mob-day-hdrs{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;padding:4px 8px 2px}
-.mob-dhdr{text-align:center;font-size:9px;font-weight:700;letter-spacing:1px;
-  color:var(--muted);padding:2px 0;text-transform:uppercase}
-.mob-dhdr.wknd{color:rgba(224,123,0,.5)}
-.mob-cell-tap:active{border-color:var(--border2) !important;background:var(--bg2) !important}
-.mob-month-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;padding:2px 8px 20px}
-.mob-cell{background:var(--bg1);border:1px solid var(--border);border-radius:8px;
-  padding:5px 4px 4px;min-height:60px;display:flex;flex-direction:column;cursor:pointer;
-  transition:border-color .2s;-webkit-tap-highlight-color:transparent}
-.mob-cell:active{border-color:var(--border2);background:var(--bg2)}
-.mob-cell.mob-empty{background:rgba(14,13,11,.4);border-color:rgba(240,165,0,.04);cursor:default;opacity:.4}
-.mob-cell.mob-today{border-color:var(--gold);background:rgba(240,165,0,.07)}
-.mob-cell.mob-wknd{background:rgba(14,13,11,.7)}
-.mob-cell-num{font-family:'DM Mono',monospace;font-size:12px;font-weight:700;
-  color:var(--muted);line-height:1;display:flex;align-items:center;justify-content:center;
-  width:22px;height:22px;border-radius:50%;margin-bottom:3px;flex-shrink:0}
-.mob-cell.mob-today .mob-cell-num{color:var(--bg0);background:var(--gold);font-weight:800}
-.mob-cell-dots{display:flex;flex-wrap:wrap;gap:2px;overflow:hidden;padding:0 1px}
-.mob-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0}
-.mob-cell-count{font-size:8px;color:var(--muted);font-weight:700;margin-top:1px;text-align:center}
-.mob-chip-sm{font-size:8px;border-radius:3px;padding:1px 4px;white-space:nowrap;
-  overflow:hidden;text-overflow:ellipsis;width:100%;font-weight:700;line-height:1.5}
-
-/* ── Mobile week view ── */
-.mob-week-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;padding:8px 8px 0}
-.mob-week-grid{display:grid;grid-template-columns:44px repeat(7,minmax(80px,1fr));min-width:620px}
-.mob-wk-corner{border-bottom:1px solid var(--border);border-right:1px solid var(--border);
-  position:sticky;left:0;background:var(--bg0);z-index:5}
-.mob-wk-day-hdr{border-bottom:1px solid var(--border);border-right:1px solid var(--border);
-  padding:6px 4px;text-align:center;background:var(--bg0)}
-.mob-wk-day-name{font-size:9px;font-weight:700;letter-spacing:1px;color:var(--muted);text-transform:uppercase}
-.mob-wk-day-num{font-family:'DM Mono',monospace;font-size:20px;color:var(--text);margin-top:1px;line-height:1}
-.mob-wk-day-num.today-num{color:var(--gold)}
-.mob-wk-time{font-family:'DM Mono',monospace;font-size:9px;color:var(--muted);
-  text-align:right;padding:3px 4px 0;border-right:1px solid var(--border);border-bottom:1px solid var(--border);
-  position:sticky;left:0;background:var(--bg0);z-index:4}
-.mob-wk-cell{border-right:1px solid var(--border);border-bottom:1px solid var(--border);
-  min-height:42px;padding:2px 3px;cursor:pointer}
-.mob-wk-cell:active{background:var(--bg2)}
-.mob-wk-chip{font-size:9px;border-radius:3px;padding:2px 4px;margin-bottom:2px;
-  font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
-  color:var(--text2);background:rgba(0,0,0,.25);display:block}
-
-/* ── Mobile day view ── */
-.mob-day-timeline{padding:0 0 20px}
-.mob-day-row{display:flex;border-bottom:1px solid var(--border);min-height:52px}
-.mob-day-time{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);
-  width:44px;padding:8px 6px 0 8px;text-align:right;flex-shrink:0;
-  border-right:1px solid var(--border);line-height:1}
-.mob-day-slot{flex:1;padding:4px 10px;display:flex;flex-direction:column;gap:3px;cursor:pointer}
-.mob-day-slot:active{background:var(--bg2)}
-.mob-day-ev{border-radius:6px;padding:5px 8px;font-size:12px;font-weight:700;
-  color:var(--text);cursor:pointer;border-left:3px solid transparent}
-.mob-day-ev.c0{background:rgba(91,155,213,.18);border-left-color:var(--blue)}
-.mob-day-ev.c1{background:rgba(155,127,232,.18);border-left-color:var(--purple)}
-.mob-day-ev.c2{background:rgba(104,181,132,.18);border-left-color:var(--green)}
-.mob-day-ev.c3{background:rgba(240,165,0,.18);border-left-color:var(--gold)}
-.mob-day-ev.c4{background:rgba(217,95,95,.18);border-left-color:var(--red)}
-.mob-day-ev.c5{background:rgba(74,184,160,.18);border-left-color:var(--teal)}
-.mob-day-ev-title{font-size:13px;font-weight:700;color:var(--text)}
-.mob-day-ev-meta{font-size:10px;color:var(--muted);font-family:'DM Mono',monospace;margin-top:1px}
-
-/* ── Mobile event list (week/agenda sections) ── */
-.mob-day-section{padding:14px 14px 0}
-.mob-day-hdr{font-size:10px;font-weight:700;letter-spacing:1.5px;color:var(--muted);
-  text-transform:uppercase;margin-bottom:8px;display:flex;
-  align-items:center;gap:8px}
-.mob-day-hdr::after{content:'';flex:1;height:1px;background:var(--border)}
-.mob-day-hdr.today-hdr{color:var(--gold)}
-.mob-event{background:var(--bg1);border:1px solid var(--border);border-radius:12px;
-  padding:12px 14px;margin-bottom:8px;
-  display:flex;align-items:flex-start;gap:10px;cursor:pointer;
-  -webkit-tap-highlight-color:transparent;transition:border-color .15s}
-.mob-event:active{border-color:var(--border2);background:var(--bg2)}
-.mob-event-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;margin-top:4px}
-.mob-event-body{flex:1;min-width:0}
-.mob-event-title{font-size:15px;font-weight:700;color:var(--text);margin-bottom:3px;
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.mob-event-time{font-family:'DM Mono',monospace;font-size:11px;color:var(--muted)}
-.mob-event-desc{font-size:12px;color:var(--text2);margin-top:4px;line-height:1.4}
-.mob-empty{padding:16px 0;font-size:13px;color:var(--muted);font-style:italic;text-align:center}
-
-/* ── Mobile mic/voice bar ── */
-#mob-mic{position:fixed;bottom:0;left:0;right:0;z-index:50;
-  background:rgba(14,13,11,.97);border-top:1px solid var(--border);
-  flex-direction:column;gap:0;align-items:stretch;
-  padding-bottom:var(--sb)}
-.mob-voice-info{display:flex;gap:10px;padding:8px 14px 0;align-items:flex-start;min-height:36px}
-.mob-transcript-lbl{font-size:10px;color:var(--gold);font-family:'DM Mono',monospace;
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1}
-.mob-response-lbl{font-size:10px;color:var(--text2);font-family:'DM Mono',monospace;
-  text-align:left;flex:2;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.mob-controls{display:flex;gap:8px;align-items:center;padding:8px 14px 10px}
-.mob-mic-btn{width:48px;height:48px;border-radius:50%;border:2px solid var(--border2);flex-shrink:0;
-  background:radial-gradient(circle at 36% 30%,rgba(240,165,0,.15),rgba(14,13,11,.8));
-  font-size:22px;transition:all .3s;display:flex;align-items:center;justify-content:center;
-  -webkit-tap-highlight-color:transparent}
-.mob-mic-btn.active{border-color:var(--gold);box-shadow:0 0 20px rgba(240,165,0,.35);
-  animation:breathe 1.8s ease-in-out infinite}
-
-/* ── Modal mobile ── */
-@media(max-width:767px){
-  #modal-overlay{align-items:flex-end;padding:0}
-  .modal{border-radius:20px 20px 0 0;max-width:100%;max-height:92dvh;
-    padding:20px 20px 30px}
-  .modal::before{content:'';display:block;width:36px;height:4px;
-    background:var(--border2);border-radius:2px;margin:0 auto 18px;flex-shrink:0}
-}
-
-/* MODAL */
-#modal-overlay{position:fixed;inset:0;z-index:100;background:rgba(0,0,0,.65);
-  backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;padding:20px}
-#modal-overlay.hidden{display:none}
-.modal{background:var(--bg1);border:1px solid var(--border2);border-radius:16px;
-  padding:28px;width:100%;max-width:440px;max-height:90dvh;overflow-y:auto}
-.modal-title{font-size:18px;font-weight:800;color:var(--text);margin-bottom:20px;
-  display:flex;align-items:center;justify-content:space-between}
-.modal-close{background:none;border:none;color:var(--muted);font-size:20px;padding:4px;border-radius:4px;transition:color .2s}
-.modal-close:hover{color:var(--text)}
-.mfield{margin-bottom:14px}
-.mfield label{display:block;font-size:10px;font-weight:700;letter-spacing:2px;
-  color:var(--muted);text-transform:uppercase;margin-bottom:6px}
-.mfield input,.mfield textarea,.mfield select{width:100%;background:var(--bg2);
-  border:1px solid var(--border2);border-radius:8px;padding:10px 12px;
-  color:var(--text);font-size:14px;outline:none;transition:border-color .2s}
-.mfield input:focus,.mfield textarea:focus,.mfield select:focus{border-color:var(--gold)}
-.mfield textarea{resize:vertical;min-height:72px}
-.mfield select option{background:var(--bg2)}
-.mrow{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.modal-actions{display:flex;gap:10px;margin-top:20px;justify-content:flex-end;flex-wrap:wrap}
-.btn-cancel{background:none;border:1px solid var(--border2);color:var(--text2);
-  padding:9px 20px;border-radius:8px;font-size:13px;font-weight:600;transition:all .2s}
-.btn-cancel:hover{border-color:var(--muted)}
-.btn-save{background:var(--gold);border:none;color:var(--bg0);padding:9px 24px;
-  border-radius:8px;font-size:13px;font-weight:700;letter-spacing:.5px;transition:background .2s}
-.btn-save:hover{background:var(--gold2)}
-.btn-delete{background:none;border:1px solid rgba(217,95,95,.4);color:var(--red);
-  padding:9px 20px;border-radius:8px;font-size:13px;font-weight:600;
-  transition:all .2s;margin-right:auto}
-.btn-delete:hover{background:rgba(217,95,95,.1)}
-
-/* STATUS BAR */
-#statusbar{padding:5px 22px;border-top:1px solid var(--border);
-  display:flex;align-items:center;gap:12px;flex-shrink:0;background:rgba(14,13,11,.95)}
-@media(max-width:767px){#statusbar{display:none}}
-.st-dot{width:6px;height:6px;border-radius:50%;background:var(--green);
-  box-shadow:0 0 6px var(--green);animation:stpulse 3s ease-in-out infinite;flex-shrink:0}
-@keyframes stpulse{0%,100%{opacity:1}50%{opacity:.4}}
-.st-dot.err{background:var(--red);box-shadow:0 0 6px var(--red)}
-.st-dot.sync{background:var(--gold);box-shadow:0 0 6px var(--gold)}
-.st-txt{font-size:10px;color:var(--muted);font-family:'DM Mono',monospace;letter-spacing:.5px}
-.st-sp{flex:1}
-.key-hint{font-size:10px;color:var(--muted2);font-family:'DM Mono',monospace}
-kbd{border:1px solid var(--border2);border-radius:3px;padding:1px 6px;
-  font-size:9px;color:var(--muted);font-family:'DM Mono',monospace}
-
-/* TEXT INPUT BAR - laptop fallback */
-.cmd-bar{display:flex;gap:8px;align-items:center;flex-shrink:0;padding:0 0 4px}
-.cmd-input{flex:1;background:var(--bg2);border:1px solid var(--border2);
-  border-radius:8px;padding:9px 14px;color:var(--text);font-size:13px;
-  outline:none;transition:border-color .2s;font-family:'DM Mono',monospace}
-.cmd-input:focus{border-color:var(--gold)}
-.cmd-input::placeholder{color:var(--muted)}
-.cmd-send{background:var(--gold);border:none;border-radius:8px;
-  padding:9px 16px;font-size:13px;font-weight:700;color:var(--bg0);
-  transition:background .2s;white-space:nowrap}
-.cmd-send:hover{background:var(--gold2)}
-@media(min-width:1280px){
-  .corner{position:fixed;width:36px;height:36px;pointer-events:none;z-index:1}
-  .c-tl{top:10px;left:10px;border-top:2px solid var(--border2);border-left:2px solid var(--border2)}
-  .c-tr{top:10px;right:10px;border-top:2px solid var(--border2);border-right:2px solid var(--border2)}
-  .c-bl{bottom:10px;left:10px;border-bottom:2px solid var(--border2);border-left:2px solid var(--border2)}
-  .c-br{bottom:10px;right:10px;border-bottom:2px solid var(--border2);border-right:2px solid var(--border2)}
-}
-@media(max-width:1279px){.corner{display:none}}
-  </style>
+  /* ---------- Mobile sticky call bar ---------- */
+  .callbar{
+    position:fixed;left:0;right:0;bottom:0;z-index:60;
+    display:flex;gap:.6rem;padding:.7rem .9rem calc(.7rem + env(safe-area-inset-bottom));
+    background:rgba(9,42,38,.95);backdrop-filter:blur(8px);
+  }
+  .callbar a{flex:1;text-align:center;font-size:.95rem;padding:.75rem 1rem}
+  @media(min-width:760px){.callbar{display:none}}
+  @media(max-width:759px){body{padding-bottom:76px}}
+</style>
 </head>
 <body>
-<div class="corner c-tl"></div><div class="corner c-tr"></div>
-<div class="corner c-bl"></div><div class="corner c-br"></div>
 
-<!-- APP -->
-<div id="root">
-  <div id="topbar">
-    <div class="tb-logo">ARIA</div>
-    <div class="tb-sep"></div>
-    <div class="tb-date" id="tb-date"></div>
-    <div class="tb-spacer"></div>
-    <div class="tb-clock" id="tb-clock"></div>
-    <div class="tb-nav">
-      <button class="tb-vbtn active" onclick="setView('month',this)">Month</button>
-      <button class="tb-vbtn" onclick="setView('week',this)">Week</button>
-      <button class="tb-vbtn" onclick="setView('day',this)">Day</button>
+<header>
+  <nav class="nav" aria-label="Main">
+    <a class="brand" href="#top">
+      <span class="brand-mark" aria-hidden="true">IV</span>
+      <span class="brand-name">Isabel Velazquez<small>Cleaning Services</small></span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="#services">Services</a></li>
+      <li><a href="#estimate">Pricing</a></li>
+      <li><a href="#contact">Book</a></li>
+    </ul>
+    <a class="nav-call" href="tel:+15046996394">📞 (504) 699-6394</a>
+  </nav>
+</header>
+
+<main id="top">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div>
+      <span class="eyebrow">Reliable · Detailed · Guaranteed</span>
+      <h1>A clean you can <em>count on</em>, every single visit.</h1>
+      <p class="lede">Professional cleaning for homes, offices, apartments, and short-term rentals across the <strong>Greater New Orleans area</strong>. Isabel treats every space like her own — and every clean is backed by a satisfaction guarantee.</p>
+      <div class="hero-ctas">
+        <a class="btn btn-primary" href="#estimate">Get an instant estimate</a>
+        <a class="btn btn-ghost" href="#contact">Request a booking</a>
+      </div>
+      <ul class="hero-points">
+        <li>Serving Greater NOLA</li>
+        <li>Satisfaction guaranteed</li>
+        <li>References available</li>
+        <li>Homes · Offices · Apartments</li>
+      </ul>
     </div>
-    <button class="tb-today" onclick="goToday()">Today</button>
-    <button class="tb-settings" onclick="alert('ARIA Calendar\nAll events saved in this browser.\nTo reset: clear browser storage.')" title="About">⚙</button>
   </div>
 
-  <div id="body">
-    <!-- SIDEBAR (TV + Desktop ≥1024px) -->
-    <div id="sidebar">
-      <div class="sb-lbl">Voice Assistant</div>
-      <div class="orb-wrap">
-        <div class="orb-outer" id="orb-outer" onclick="toggleListen()">
-          <div class="orb-ring"></div><div class="orb-ring"></div><div class="orb-ring"></div>
-          <div class="orb-btn" id="orb-btn"><span class="orb-icon" id="orb-icon">🎤</span></div>
+  <!-- SERVICES -->
+  <section class="services" id="services">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow">What Isabel cleans</span>
+        <h2>Every kind of space, cleaned in detail.</h2>
+        <p>From weekly home upkeep to turnover cleans between guests — pick the service that fits, and the estimate tool below will price it for you.</p>
+      </div>
+      <div class="svc-grid">
+        <div class="svc">
+          <div class="icon" aria-hidden="true">🏠</div>
+          <h3>Houses</h3>
+          <p>Full-home cleaning: kitchens, bedrooms, baths, floors, dusting, and the details most cleaners skip.</p>
         </div>
-        <div class="orb-status" id="orb-status">Space bar or tap</div>
-      </div>
-      <div class="wave" id="wave">
-        <div class="wb"></div><div class="wb"></div><div class="wb"></div>
-        <div class="wb"></div><div class="wb"></div><div class="wb"></div><div class="wb"></div>
-      </div>
-      <div>
-        <div class="sb-lbl" style="margin-bottom:6px">You said</div>
-        <div class="transcript"><div id="transcript-text" class="transcript-ph">Speak a command…</div></div>
-      </div>
-      <div style="display:flex;flex-direction:column;flex:1;overflow:hidden;gap:6px">
-        <div class="sb-lbl">ARIA</div>
-        <div class="response" id="response-box">
-          <div class="response-txt" id="response-text">Ready — tap the orb or press Space to speak a command.</div>
+        <div class="svc">
+          <div class="icon" aria-hidden="true">🏢</div>
+          <h3>Offices</h3>
+          <p>Workspaces, break rooms, and restrooms kept spotless so your team walks into a fresh office.</p>
         </div>
-      </div>
-      <div>
-        <div class="sb-lbl" style="margin-bottom:6px">Try saying…</div>
-        <div class="qcmds">
-          <button class="qcmd" onclick="runCmd('add event')">➕ Add event</button>
-          <button class="qcmd" onclick="runCmd('delete event')">🗑 Delete event</button>
-          <button class="qcmd" onclick="
-          <button class="qcmd" onclick="runCmd('what\'s on today')">📋 What\'s on today?</button>
+        <div class="svc">
+          <div class="icon" aria-hidden="true">🏬</div>
+          <h3>Apartments</h3>
+          <p>Efficient cleans for apartments and condos — including move-in and move-out deep cleans.</p>
         </div>
-      </div>
-      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:10px 12px;font-size:10px;color:var(--muted);line-height:2;flex-shrink:0">
-        <div style="font-weight:700;color:var(--text2);letter-spacing:1px;margin-bottom:4px;font-size:9px;text-transform:uppercase">ARIA guides you step by step</div>
-        <div>➕ <b style="color:var(--text2)">Add</b> — Date → Name → Start → End → Location</div>
-        <div>✏️ <b style="color:var(--text2)">Edit</b> — Date → Name → Field (name/date/time/location) → New value</div>
-        <div>🗑 <b style="color:var(--text2)">Delete</b> — Date → Name → Confirm</div>
-        <div>💬 <b style="color:var(--text2)">Ask</b> — "How many school days this week?"</div>
-        <div style="margin-top:6px;color:var(--gold);font-size:9px">Say "cancel" anytime • Tap 🔊 to hear commands</div>
-      </div>
-      <div class="cmd-bar">
-        <input class="cmd-input" id="cmd-input" type="text" placeholder="Or type a command…" onkeydown="if(event.key==='Enter')sendTyped()"/>
-        <button class="cmd-send" onclick="sendTyped()">Send</button>
+        <div class="svc">
+          <div class="icon" aria-hidden="true">🛎️</div>
+          <h3>Hotels &amp; Rentals</h3>
+          <p>Fast, thorough turnovers for hotel rooms, Airbnbs, and short-term rentals — guest-ready every time.</p>
+        </div>
       </div>
     </div>
+  </section>
 
-    <!-- CALENDAR (desktop + TV) -->
-    <div id="calarea">
-      <div class="cal-hdr">
-        <button class="cal-mnav" onclick="prevPeriod()">&#8249;</button>
-        <div class="cal-title"><span id="cal-month"></span><span class="cal-year" id="cal-year"></span></div>
-        <button class="cal-mnav" onclick="nextPeriod()">&#8250;</button>
-        <div class="cal-hdr-sp"></div>
-        <button class="cal-add" onclick="openAddModal()">+ Add Event</button>
+  <!-- ESTIMATOR -->
+  <section class="estimator" id="estimate">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow">Instant estimate</span>
+        <h2>Know your price before you call.</h2>
+        <p>Honest, simple pricing at $25/hour. Tell us about your space and see your estimate update live — then send it straight to Isabel.</p>
       </div>
-      <div class="day-hdrs" id="day-hdrs">
-        <div class="dhdr wk">Sun</div><div class="dhdr">Mon</div><div class="dhdr">Tue</div>
-        <div class="dhdr">Wed</div><div class="dhdr">Thu</div><div class="dhdr">Fri</div>
-        <div class="dhdr wk">Sat</div>
-      </div>
-      <div class="cal-grid" id="cal-grid"></div>
-      <div class="week-grid" id="week-grid" style="display:none"></div>
-      <div class="day-view" id="day-view" style="display:none"></div>
-    </div>
 
-    <!-- MOBILE VIEW -->
-    <div id="mobile-view">
-      <!-- Mobile Header -->
-      <div class="mob-header">
-        <div class="mob-header-row1">
-          <div class="mob-logo">ARIA</div>
-          <div class="mob-nav-group">
-            <button class="mob-nav-btn" onclick="prevPeriod()">&#8249;</button>
-            <div class="mob-month-label">
-              <span id="mob-month-lbl"></span>
-              <span class="mob-year-label" id="mob-year-lbl"></span>
+      <div class="est-grid">
+        <div class="est-controls">
+          <div class="field">
+            <label for="ptype">Property type</label>
+            <select id="ptype">
+              <option value="house" selected>House</option>
+              <option value="apartment">Apartment / Condo</option>
+              <option value="office">Office</option>
+              <option value="hotel">Hotel room / Short-term rental</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="sqft">Size <span class="hint">(square feet)</span></label>
+            <input type="range" id="sqft" min="400" max="5000" step="100" value="1000"
+                   aria-describedby="sqftOut">
+            <div class="range-row"><span>400</span><output id="sqftOut" for="sqft">1,000 sq ft</output><span>5,000</span></div>
+          </div>
+
+          <div class="field">
+            <label id="bathLabel">Bathrooms <span class="hint">(they take extra care)</span></label>
+            <div class="stepper" role="group" aria-labelledby="bathLabel">
+              <button type="button" id="bathMinus" aria-label="Fewer bathrooms">−</button>
+              <output id="bathOut" aria-live="polite">1</output>
+              <button type="button" id="bathPlus" aria-label="More bathrooms">+</button>
             </div>
-            <button class="mob-nav-btn" onclick="nextPeriod()">&#8250;</button>
           </div>
-          <div class="mob-header-actions">
-            <button class="mob-today-btn" onclick="goToday()">Today</button>
-            <button class="mob-add-btn" onclick="openAddModal()">+ Add</button>
-            <button class="mob-settings-btn" onclick="alert('ARIA Calendar\nAll events synced via Upstash.\nSay cancel anytime to stop a command.')">⚙</button>
+
+          <div class="field">
+            <label for="freq">How often</label>
+            <select id="freq">
+              <option value="once" selected>One-time clean</option>
+              <option value="monthly">Monthly — save 5%</option>
+              <option value="biweekly">Every 2 weeks — save 10%</option>
+              <option value="weekly">Weekly — save 15%</option>
+            </select>
           </div>
+
+          <label class="toggle">
+            <input type="checkbox" id="deep">
+            <span>Deep clean
+              <small>First-time, move-in/out, or post-renovation. Adds time for baseboards, appliances, and Louisiana humidity buildup in kitchens and baths.</small>
+            </span>
+          </label>
+
+          <label class="toggle" id="linenWrap" style="display:none">
+            <input type="checkbox" id="linens">
+            <span>Linens &amp; restocking
+              <small>Wash and change bed linens and towels, restock paper goods and soap between guests.</small>
+            </span>
+          </label>
         </div>
-        <div class="mob-tabs">
-          <button class="mob-tab active" id="mob-tab-month" onclick="setView('month',this)">Month</button>
-          <button class="mob-tab" id="mob-tab-week" onclick="setView('week',this)">Week</button>
-          <button class="mob-tab" id="mob-tab-day" onclick="setView('day',this)">Day</button>
+
+        <div class="receipt" aria-live="polite">
+          <div class="receipt-head">
+            <div class="rc-brand">IV CLEANING SERVICES</div>
+            <small>Your estimate</small>
+          </div>
+          <div class="rc-line"><span>Property</span><span id="rcType">House</span></div>
+          <div class="rc-line"><span>Size</span><span id="rcSize">1,000 sq ft</span></div>
+          <div class="rc-line"><span>Bathrooms</span><span id="rcBaths">1</span></div>
+          <div class="rc-line"><span>Service</span><span id="rcService">Standard clean</span></div>
+          <div class="rc-line"><span>Estimated time</span><span id="rcHours">—</span></div>
+          <div class="rc-line"><span>Rate</span><span>$25 / hour</span></div>
+          <div class="rc-line"><span>Schedule</span><span id="rcFreq">One-time</span></div>
+          <div class="rc-line" id="rcDiscRow" style="display:none"><span>Recurring discount</span><span id="rcDisc">—</span></div>
+          <div class="rc-total">
+            <span class="label">Estimated total</span>
+            <span class="amount" id="rcTotal">$—</span>
+          </div>
+          <p class="rc-note">Estimate only — final quote confirmed after a quick chat about your space.</p>
+          <a class="btn btn-primary" href="#contact" id="sendEstimate">Book this clean →</a>
         </div>
       </div>
-      <div class="mob-agenda" id="mob-agenda"></div>
     </div>
-  </div>
+  </section>
 
-  <div id="statusbar">
-    <div class="st-dot" id="st-dot"></div>
-    <div class="st-txt" id="st-txt">Ready</div>
-    <div class="st-sp"></div>
-    <button onclick="requestNotifPermission()" id="notif-btn" style="background:none;border:1px solid var(--border);color:var(--muted);padding:3px 10px;border-radius:5px;font-size:10px;font-family:'DM Mono',monospace;cursor:pointer;transition:all .2s" title="Enable notifications">🔔 Alerts</button>
-    <button onclick="forceSync()" style="background:none;border:1px solid var(--border);color:var(--muted);padding:3px 10px;border-radius:5px;font-size:10px;font-family:'DM Mono',monospace;cursor:pointer;transition:all .2s">⟳ Sync</button>
-    <div class="key-hint"><kbd>Space</kbd> voice &nbsp;·&nbsp; <kbd>N</kbd> new event &nbsp;·&nbsp; <kbd>← →</kbd> navigate &nbsp;·&nbsp; <kbd>T</kbd> today</div>
-  </div>
-</div>
-
-<!-- Mobile voice bar -->
-<div id="mob-mic">
-  <div class="mob-voice-info">
-    <span class="mob-transcript-lbl" id="mob-transcript-lbl">Tap mic to speak…</span>
-    <span class="mob-response-lbl" id="mob-response-lbl"></span>
-  </div>
-  <div class="mob-controls">
-    <button class="mob-mic-btn" id="mob-mic-btn" onclick="primeTTS();toggleListen()">🎤</button>
-    <input class="cmd-input" id="mob-cmd-input" type="text" placeholder="Or type a command…"
-      onkeydown="if(event.key==='Enter')sendTyped()"
-      style="flex:1;padding:10px 14px;font-size:13px;border-radius:8px"/>
-    <button class="cmd-send" onclick="primeTTS();sendTyped()" style="padding:10px 14px">→</button>
-  </div>
-</div>
-
-<!-- MODAL -->
-<div id="modal-overlay" class="hidden" onclick="closeModalOutside(event)">
-  <div class="modal">
-    <div class="modal-title">
-      <span id="modal-title-txt">New Event</span>
-      <button class="modal-close" onclick="closeModal()">&#10005;</button>
-    </div>
-    <div class="mfield"><label>Title</label><input id="ev-title" type="text" placeholder="Event title"/></div>
-    <div class="mrow">
-      <div class="mfield"><label>Date</label><input id="ev-date" type="date"/></div>
-      <div class="mfield"><label>Color</label>
-        <select id="ev-color">
-          <option value="0">Blue</option><option value="1">Purple</option>
-          <option value="2">Green</option><option value="3">Gold</option>
-          <option value="4">Red</option><option value="5">Teal</option>
-        </select>
+  <!-- CONTACT -->
+  <section class="contact" id="contact">
+    <div class="wrap contact-grid">
+      <div class="contact-info">
+        <span class="eyebrow">Request a booking</span>
+        <h2>Tell Isabel about your space.</h2>
+        <p>Fill out the form and Isabel will get back to you quickly to confirm your date, walk through your space's needs, and lock in your final quote.</p>
+        <div class="info-card">
+          <strong>Call or text</strong>
+          <a href="tel:+15046996394">(504) 699-6394</a>
+        </div>
+        <div class="info-card">
+          <strong>Service area</strong>
+          <a href="#services" style="font-size:1rem">Greater New Orleans — New Orleans, Metairie, Kenner, Gretna, Harvey, Marrero, Chalmette &amp; nearby</a>
+        </div>
       </div>
+
+      <form class="intake" action="https://formsubmit.co/isabelvc189@gmail.com" method="POST">
+        <!-- FormSubmit settings -->
+        <input type="hidden" name="_cc" value="edithbautiz@gmail.com">
+        <input type="hidden" name="_subject" value="New cleaning request — isabelvelazquez.com">
+        <input type="hidden" name="_template" value="table">
+        <input type="hidden" name="_captcha" value="false">
+        <input type="hidden" name="_autoresponse" value="Thanks for reaching out to IV Cleaning Services! Isabel has received your cleaning request and will get back to you shortly to confirm your date and final quote. If you need anything sooner, call or text (504) 699-6394. — Isabel Velazquez, Professional Cleaning">
+        <input type="hidden" name="_next" value="https://www.isabelvelazquez.com/thanks.html">
+        <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off">
+        <input type="hidden" name="Estimate from pricing tool" id="estimateField" value="Not used">
+
+        <div class="form-row">
+          <div>
+            <label for="fName">Name <span class="req">*</span></label>
+            <input id="fName" name="Name" type="text" required autocomplete="name" placeholder="Your full name">
+          </div>
+          <div>
+            <label for="fPhone">Phone <span class="req">*</span></label>
+            <input id="fPhone" name="Phone" type="tel" required autocomplete="tel" placeholder="(504) 555-0123">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div>
+            <label for="fEmail">Email <span class="req">*</span></label>
+            <input id="fEmail" name="Email" type="email" required autocomplete="email" placeholder="you@email.com">
+          </div>
+          <div>
+            <label for="fDate">Preferred date</label>
+            <input id="fDate" name="Preferred date" type="date">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div>
+            <label for="fType">Property type <span class="req">*</span></label>
+            <select id="fType" name="Property type" required>
+              <option value="House">House</option>
+              <option value="Apartment / Condo">Apartment / Condo</option>
+              <option value="Office">Office</option>
+              <option value="Hotel / Short-term rental">Hotel / Short-term rental</option>
+            </select>
+          </div>
+          <div>
+            <label for="fAddress">City / neighborhood</label>
+            <input id="fAddress" name="Location" type="text" placeholder="e.g. Metairie, Mid-City, Kenner…">
+          </div>
+        </div>
+
+        <div>
+          <label for="fMsg">Tell us about your space</label>
+          <textarea id="fMsg" name="Details" placeholder="Size, number of bathrooms, pets, how often you'd like cleaning, anything special…"></textarea>
+        </div>
+
+        <button class="btn btn-primary" type="submit">Send my request</button>
+        <p style="font-size:.8rem;color:var(--muted)">Your request goes straight to Isabel's inbox. No spam, ever.</p>
+      </form>
     </div>
-    <div class="mrow">
-      <div class="mfield"><label>Start time</label><input id="ev-start" type="time"/></div>
-      <div class="mfield"><label>End time</label><input id="ev-end" type="time"/></div>
-    </div>
-    <div class="mfield"><label>Description (optional)</label>
-      <textarea id="ev-desc" placeholder="Notes, location, links…"></textarea></div>
-    <div class="modal-actions">
-      <button class="btn-delete" id="btn-delete" onclick="deleteEvent()" style="display:none">Delete</button>
-      <button class="btn-cancel" onclick="closeModal()">Cancel</button>
-      <button class="btn-save" onclick="saveEvent()">Save Event</button>
+  </section>
+</main>
+
+<footer>
+  <div class="foot">
+    <a class="brand" href="#top" style="text-decoration:none">
+      <span class="brand-mark" aria-hidden="true">IV</span>
+      <span class="brand-name">Isabel Velazquez<small>Professional Cleaning</small></span>
+    </a>
+    <div class="foot-meta">
+      Reliable. Detailed. Satisfaction guaranteed.<br>
+      Proudly serving the Greater New Orleans area.<br>
+      <a href="tel:+15046996394">(504) 699-6394</a> · <a href="https://www.isabelvelazquez.com">isabelvelazquez.com</a>
     </div>
   </div>
+</footer>
+
+<!-- Mobile sticky action bar -->
+<div class="callbar">
+  <a class="btn btn-ghost" style="border-color:var(--mint);color:var(--mint)" href="tel:+15046996394">Call now</a>
+  <a class="btn btn-primary" href="#estimate">Get estimate</a>
 </div>
 
 <script>
-// ─── STATE
-let events = [];
-let viewDate = new Date();
-let currentView = 'month';
-let editingId = null;
-let isListening = false;
-let isProcessing = false;
-let recognition = null;
+(function(){
+  var RATE = 25; // $ per hour
 
-const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-const DAYS_SHORT = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-const COLOR_HEX = ['#5b9bd5','#9b7fe8','#68b584','#f0a500','#d95f5f','#4ab8a0'];
+  // Hours per square foot, tapered. The first 1,000 sq ft takes the most time
+  // per foot (kitchen + baths are the slow rooms); space beyond that is mostly
+  // floors and surfaces, so it bills at a lower rate.
+  // Anchor: 1,000 sq ft house, 2 baths = 6.5 + 1.5 = 8 hrs = $200.
+  var TYPES = {
+    house:     { base:0.0065, taper:0.0045, bath:0.75 },
+    apartment: { base:0.0055, taper:0.0040, bath:0.75 },
+    office:    { base:0.0040, taper:0.0030, bath:0.60 },
+    hotel:     { base:0.0035, taper:0.0028, bath:0.75 }
+  };
+  var TAPER_AT = 1000;     // sq ft above this bills at the taper rate
+  var TYPE_LABELS = {
+    house: "House",
+    apartment: "Apartment / Condo",
+    office: "Office",
+    hotel: "Hotel / Rental"
+  };
+  var DEEP_MULT = 1.45;    // deep / move-out cleans
+  var LINEN_HOURS = 1.0;   // laundry, linens & restocking on turnovers
+  var MIN_HOURS = 4;       // minimum visit
+  var FREQ = {             // recurring-visit discounts
+    once:     {mult:1.00, label:"One-time"},
+    monthly:  {mult:0.95, label:"Monthly"},
+    biweekly: {mult:0.90, label:"Every 2 weeks"},
+    weekly:   {mult:0.85, label:"Weekly"}
+  };
 
-// ─── BOOT
-window.addEventListener('DOMContentLoaded', async () => {
-  await loadEvents();
-  render();
-  setInterval(tickClock, 1000);
-  tickClock();
-  window.addEventListener('keydown', onKey);
-  window.addEventListener('resize', render);
-  // poll every 30s + reload when tab becomes visible (phone/PC switching)
-  setInterval(async () => { await loadEvents(); render(); }, 30000);
-  document.addEventListener('visibilitychange', async () => {
-    if (!document.hidden) { await loadEvents(); render(); }
-  });
-  // request notification permission + start checker
-  // preload voices (iOS needs this called early)
-  if (window.speechSynthesis) {
-    window.speechSynthesis.getVoices();
-    window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
-  }
-  requestNotifPermission();
-  setInterval(checkUpcomingEvents, 60000);
-  checkUpcomingEvents();
-  setTimeout(() => showResponseRaw('Tap the mic and say <b>add event</b> or <b>delete event</b>.<br><span style="font-size:10px;color:var(--muted)">Tap 🔊 to hear all commands.</span>'), 100);
-});
+  var ptype = document.getElementById('ptype');
+  var sqft = document.getElementById('sqft');
+  var sqftOut = document.getElementById('sqftOut');
+  var bathOut = document.getElementById('bathOut');
+  var deep = document.getElementById('deep');
+  var freqSel = document.getElementById('freq');
+  var linens = document.getElementById('linens');
+  var linenWrap = document.getElementById('linenWrap');
+  var baths = 1;
 
-// ─── CLOCK
-function tickClock() {
-  const n = new Date();
-  const h = String(n.getHours()).padStart(2,'0');
-  const m = String(n.getMinutes()).padStart(2,'0');
-  const s = String(n.getSeconds()).padStart(2,'0');
-  const c = document.getElementById('tb-clock');
-  if (c) c.innerHTML = h+'<span class="colon">:</span>'+m+'<span class="tb-sec">:'+s+'</span>';
-  const d = document.getElementById('tb-date');
-  if (d) d.textContent = n.toLocaleDateString('en-US',{weekday:'long',month:'short',day:'numeric',year:'numeric'}).toUpperCase();
-  const md = document.getElementById('mob-today-date');
-  if (md) md.textContent = n.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'});
-}
+  function fmtSqft(v){ return Number(v).toLocaleString() + " sq ft"; }
 
-// ─── STORAGE — server-side KV (cross-device) with localStorage fallback
-let useKV = false;
+  function update(){
+    var t = TYPES[ptype.value];
+    var sf = Number(sqft.value);
+    var isTurnover = (ptype.value === 'hotel');
 
-function toArray(val) {
-  if (Array.isArray(val)) return val;
-  if (typeof val === 'string') { try { const p = JSON.parse(val); return Array.isArray(p) ? p : []; } catch { return []; } }
-  return [];
-}
+    // Tapered floor area
+    var hours = Math.min(sf, TAPER_AT) * t.base;
+    if (sf > TAPER_AT) hours += (sf - TAPER_AT) * t.taper;
 
-async function loadEvents() {
-  try {
-    const res = await fetch('/api/events');
-    const data = await res.json();
-    console.log('SERVER RESPONSE:', JSON.stringify(data).slice(0,300));
-    if (res.ok && data.events !== undefined) {
-      events = toArray(data.events);
-      useKV = true;
-      setStatus('ok', 'Server: '+events.length+' events loaded');
-      return;
+    hours += baths * t.bath;
+    if (isTurnover && linens.checked) hours += LINEN_HOURS;
+    if (deep.checked) hours *= DEEP_MULT;
+
+    hours = Math.max(hours, MIN_HOURS);
+    hours = Math.round(hours * 2) / 2; // nearest half hour
+
+    var freq = FREQ[freqSel.value];
+    var price = Math.round((hours * RATE * freq.mult) / 5) * 5; // nearest $5
+
+    // Show/hide the turnover-only option
+    linenWrap.style.display = isTurnover ? 'flex' : 'none';
+
+    sqftOut.textContent = fmtSqft(sf);
+    bathOut.textContent = baths;
+
+    var service = deep.checked ? "Deep clean" : "Standard clean";
+    if (isTurnover && linens.checked) service += " + linens";
+
+    document.getElementById('rcType').textContent = TYPE_LABELS[ptype.value];
+    document.getElementById('rcSize').textContent = fmtSqft(sf);
+    document.getElementById('rcBaths').textContent = baths;
+    document.getElementById('rcService').textContent = service;
+    document.getElementById('rcHours').textContent = "~" + hours + (hours === 1 ? " hour" : " hours");
+    document.getElementById('rcFreq').textContent = freq.label;
+
+    var discRow = document.getElementById('rcDiscRow');
+    if (freq.mult < 1){
+      discRow.style.display = 'flex';
+      document.getElementById('rcDisc').textContent =
+        "−" + Math.round((1 - freq.mult) * 100) + "%";
     } else {
-      setStatus('err', 'Server returned: '+JSON.stringify(data).slice(0,80));
+      discRow.style.display = 'none';
     }
-  } catch(e) {
-    setStatus('err', 'Load error: '+e.message);
+
+    document.getElementById('rcTotal').textContent = "$" + price.toLocaleString();
+
+    // Pass the estimate into the intake form so Isabel sees it in the email
+    document.getElementById('estimateField').value =
+      TYPE_LABELS[ptype.value] + ", " + fmtSqft(sf) + ", " + baths +
+      " bath(s), " + service.toLowerCase() + ", " + freq.label.toLowerCase() +
+      " — approx. " + hours + " hrs, estimated $" + price;
+
+    // Keep the booking form's property type in sync
+    var map = {house:"House", apartment:"Apartment / Condo", office:"Office", hotel:"Hotel / Short-term rental"};
+    document.getElementById('fType').value = map[ptype.value];
   }
-  try { events = toArray(JSON.parse(localStorage.getItem('aria_events')||'[]')); } catch { events=[]; }
-  setStatus('ok', 'Local: '+events.length+' events');
-}
 
-async function saveEvents() {
-  if (!Array.isArray(events)) events = toArray(events);
-  localStorage.setItem('aria_events', JSON.stringify(events));
-  if (useKV) {
-    try {
-      const res = await fetch('/api/events', {
-        method: 'POST',
-        headers: {'Content-Type':'application/json'},
-        body: JSON.stringify({ events })
-      });
-      const data = await res.json();
-      if (data.ok) {
-        setStatus('ok', 'Synced to server ✓');
-        setTimeout(() => setStatus('ok', 'Ready'), 2000);
-      } else {
-        setStatus('err', 'Server save failed: ' + (data.error||'unknown'));
-      }
-    } catch(e) {
-      setStatus('err', 'Sync error: ' + e.message);
-    }
-  } else {
-    setStatus('ok', 'Saved locally (no server)');
-  }
-}
-
-// ─── HELPERS
-function dateStr(d) {
-  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
-}
-function todayStr() { return dateStr(new Date()); }
-function eventsFor(ds) { return events.filter(e=>e.date===ds); }
-function colorIdx(e) { return typeof e.color==='number' ? e.color % 6 : (e.id||'').charCodeAt(0)%6; }
-
-// ─── NAV
-function onKey(e) {
-  if (['INPUT','TEXTAREA','SELECT'].includes(e.target.tagName)) return;
-  if (e.code==='Space'){e.preventDefault();toggleListen();}
-  if (e.key==='n'||e.key==='N') openAddModal();
-  if (e.key==='ArrowLeft') prevPeriod();
-  if (e.key==='ArrowRight') nextPeriod();
-  if (e.key==='Escape') closeModal();
-  if (e.key==='t'||e.key==='T') goToday();
-}
-
-function setView(v, btn, keepDate) {
-  currentView = v;
-  document.querySelectorAll('.tb-vbtn').forEach(b=>b.classList.remove('active'));
-  if (btn) btn.classList.add('active');
-  // sync mobile tabs
-  ['month','week','day'].forEach(tab=>{
-    const t=document.getElementById('mob-tab-'+tab);
-    if(t) t.classList.toggle('active', tab===v);
+  ptype.addEventListener('change', update);
+  sqft.addEventListener('input', update);
+  deep.addEventListener('change', update);
+  freqSel.addEventListener('change', update);
+  linens.addEventListener('change', update);
+  document.getElementById('bathMinus').addEventListener('click', function(){
+    baths = Math.max(0, baths - 1); update();
   });
-  if (v === 'day' && !keepDate) viewDate = new Date();
-  render();
-}
-
-function goToday() { viewDate=new Date(); render(); }
-
-function prevPeriod() {
-  if (currentView==='month') viewDate=new Date(viewDate.getFullYear(),viewDate.getMonth()-1,1);
-  else if (currentView==='week') viewDate=new Date(viewDate.getTime()-7*86400000);
-  else viewDate=new Date(viewDate.getTime()-86400000);
-  render();
-}
-function nextPeriod() {
-  if (currentView==='month') viewDate=new Date(viewDate.getFullYear(),viewDate.getMonth()+1,1);
-  else if (currentView==='week') viewDate=new Date(viewDate.getTime()+7*86400000);
-  else viewDate=new Date(viewDate.getTime()+86400000);
-  render();
-}
-
-// ─── RENDER ROUTER
-function render() {
-  if (window.innerWidth < 768) { renderMobileView(); return; }
-  if (currentView==='month') renderMonth();
-  else if (currentView==='week') renderWeek();
-  else renderDay();
-}
-
-// MONTH
-function renderMonth() {
-  show('cal-grid','grid'); hide('week-grid'); hide('day-view'); show('day-hdrs','grid');
-  const y=viewDate.getFullYear(), mo=viewDate.getMonth();
-  document.getElementById('cal-month').textContent=MONTHS[mo]+' ';
-  document.getElementById('cal-year').textContent=y;
-  const firstDay=new Date(y,mo,1).getDay();
-  const dim=new Date(y,mo+1,0).getDate();
-  const cells=[]; for(let i=0;i<firstDay;i++)cells.push(null); for(let d=1;d<=dim;d++)cells.push(d);
-  while(cells.length%7!==0)cells.push(null);
-  const grid=document.getElementById('cal-grid'); grid.innerHTML='';
-  const td=todayStr();
-  cells.forEach((d,idx)=>{
-    const div=document.createElement('div'); div.className='cell';
-    if(!d){div.classList.add('empty');grid.appendChild(div);return;}
-    const col=idx%7;
-    if(col===0||col===6) div.classList.add('wknd');
-    const ds=y+'-'+String(mo+1).padStart(2,'0')+'-'+String(d).padStart(2,'0');
-    if(ds===td) div.classList.add('today');
-    div.innerHTML='<div class="cell-num">'+d+'</div><div class="cell-evts" id="ce-'+ds+'"></div>';
-    div.onclick=()=>{
-      viewDate = new Date(y, mo, d);
-      currentView = 'day';
-      document.querySelectorAll('.tb-vbtn').forEach(b=>b.classList.remove('active'));
-      const dayBtn = Array.from(document.querySelectorAll('.tb-vbtn')).find(b=>b.textContent.trim()==='Day');
-      if(dayBtn) dayBtn.classList.add('active');
-      render();
-    };
-    grid.appendChild(div);
-    const box=document.getElementById('ce-'+ds);
-    const evs=eventsFor(ds);
-    evs.slice(0,3).forEach(ev=>{
-      const chip=document.createElement('div');
-      chip.className='chip c'+colorIdx(ev);
-      chip.textContent=(ev.startTime?ev.startTime+' ':'')+ev.title;
-      chip.onclick=e=>{e.stopPropagation();openEditModal(ev.id);};
-      box.appendChild(chip);
-    });
-    if(evs.length>3){const m=document.createElement('div');m.className='chip-more';m.textContent='+'+(evs.length-3)+' more';box.appendChild(m);}
-  });
-}
-
-// WEEK
-function renderWeek() {
-  hide('cal-grid'); show('week-grid','grid'); hide('day-view'); hide('day-hdrs');
-  const start=new Date(viewDate); start.setDate(viewDate.getDate()-viewDate.getDay());
-  const end=new Date(start.getTime()+6*86400000);
-  document.getElementById('cal-month').textContent=MONTHS[start.getMonth()]+(start.getMonth()!==end.getMonth()?'/'+MONTHS[end.getMonth()]:'')+' ';
-  document.getElementById('cal-year').textContent=start.getFullYear();
-  const wg=document.getElementById('week-grid'); wg.innerHTML='';
-  const td=todayStr();
-  // header
-  const th=document.createElement('div'); th.style.cssText='border-bottom:1px solid var(--border);border-right:1px solid var(--border);position:sticky;top:0;background:var(--bg0);z-index:5'; wg.appendChild(th);
-  for(let d=0;d<7;d++){
-    const day=new Date(start.getTime()+d*86400000); const ds=dateStr(day);
-    const hdr=document.createElement('div'); hdr.className='wk-day-hdr';
-    hdr.innerHTML='<div class="wk-day-name">'+DAYS_SHORT[d]+'</div><div class="wk-day-num'+(ds===td?' today-num':'')+'">'+day.getDate()+'</div>';
-    wg.appendChild(hdr);
-  }
-  for(let h=0;h<24;h++){
-    const tl=document.createElement('div'); tl.className='wk-time';
-    tl.textContent=h===0?'12AM':h<12?h+'AM':h===12?'12PM':(h-12)+'PM';
-    wg.appendChild(tl);
-    for(let d=0;d<7;d++){
-      const day=new Date(start.getTime()+d*86400000); const ds=dateStr(day);
-      const cell=document.createElement('div'); cell.className='wk-cell';
-      const hStr=String(h).padStart(2,'0')+':00';
-      cell.onclick=()=>openAddModal(ds,hStr);
-      eventsFor(ds).filter(ev=>{
-        if(!ev.startTime||ev.startTime.trim()==='') return h===0;
-        return parseInt(ev.startTime.split(':')[0],10)===h;
-      }).forEach(ev=>{
-        const ch=document.createElement('div'); ch.className='wk-chip c'+colorIdx(ev);
-        ch.style.background='rgba(0,0,0,.25)'; ch.textContent=ev.startTime+' '+ev.title;
-        ch.onclick=e=>{e.stopPropagation();openEditModal(ev.id);}; cell.appendChild(ch);
-      });
-      wg.appendChild(cell);
-    }
-  }
-}
-
-// DAY
-function renderDay() {
-  hide('cal-grid'); hide('week-grid'); show('day-view','flex'); hide('day-hdrs');
-  const ds=dateStr(viewDate);
-  document.getElementById('cal-month').textContent=DAYS_SHORT[viewDate.getDay()]+', '+MONTHS[viewDate.getMonth()]+' ';
-  document.getElementById('cal-year').textContent=viewDate.getDate()+', '+viewDate.getFullYear();
-  const dv=document.getElementById('day-view'); dv.innerHTML='';
-
-  const allEvs = eventsFor(ds);
-  const allDay  = allEvs.filter(ev => !ev.startTime || ev.startTime.trim() === '');
-  const timed   = allEvs.filter(ev =>  ev.startTime && ev.startTime.trim() !== '');
-
-  // All-day banner
-  if (allDay.length) {
-    const banner = document.createElement('div');
-    banner.style.cssText='display:flex;align-items:center;gap:6px;padding:6px 12px 6px 60px;border-bottom:1px solid var(--border);flex-shrink:0;flex-wrap:wrap';
-    const lbl = document.createElement('span');
-    lbl.style.cssText='font-size:9px;font-weight:700;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin-right:4px';
-    lbl.textContent='All day'; banner.appendChild(lbl);
-    allDay.forEach(ev=>{
-      const ch=document.createElement('div'); ch.className='day-chip c'+colorIdx(ev);
-      ch.style.cssText='background:rgba(0,0,0,.2);font-size:12px;cursor:pointer';
-      ch.textContent=ev.title;
-      ch.onclick=()=>openEditModal(ev.id); banner.appendChild(ch);
-    });
-    dv.appendChild(banner);
-  }
-
-  // Hourly slots
-  for(let h=0;h<24;h++){
-    const row=document.createElement('div'); row.className='day-row';
-    const tl=document.createElement('div'); tl.className='day-time';
-    tl.textContent=h===0?'12AM':h<12?h+'AM':h===12?'12PM':(h-12)+'PM'; row.appendChild(tl);
-    const slot=document.createElement('div'); slot.className='day-slot';
-    const hStr=String(h).padStart(2,'0')+':00';
-    slot.onclick=()=>openAddModal(ds,hStr);
-    timed.filter(ev=>{
-      const parts = ev.startTime.split(':');
-      return parseInt(parts[0],10) === h;
-    }).forEach(ev=>{
-      const ch=document.createElement('div'); ch.className='day-chip c'+colorIdx(ev);
-      ch.style.background='rgba(0,0,0,.2)';
-      ch.textContent=ev.startTime+(ev.endTime?' – '+ev.endTime:'')+' · '+ev.title;
-      ch.onclick=e=>{e.stopPropagation();openEditModal(ev.id);}; slot.appendChild(ch);
-    });
-    row.appendChild(slot); dv.appendChild(row);
-  }
-}
-
-// MOBILE ROUTER
-function renderMobileView() {
-  const y=viewDate.getFullYear(), mo=viewDate.getMonth();
-  const monthEl = document.getElementById('mob-month-lbl');
-  const yearEl  = document.getElementById('mob-year-lbl');
-
-  // update tabs
-  ['month','week','day'].forEach(v=>{
-    const t=document.getElementById('mob-tab-'+v);
-    if(t) t.classList.toggle('active', v===currentView);
+  document.getElementById('bathPlus').addEventListener('click', function(){
+    baths = Math.min(12, baths + 1); update();
   });
 
-  if (currentView === 'month') {
-    if(monthEl) monthEl.textContent = MONTHS[mo]+' ';
-    if(yearEl)  yearEl.textContent  = y;
-    renderMobile();
-  } else if (currentView === 'week') {
-    const start = new Date(viewDate); start.setDate(viewDate.getDate()-viewDate.getDay());
-    const end   = new Date(start.getTime()+6*86400000);
-    if(monthEl) monthEl.textContent = MONTHS[start.getMonth()]+(start.getMonth()!==end.getMonth()?'/'+MONTHS[end.getMonth()]:'')+' ';
-    if(yearEl)  yearEl.textContent  = start.getFullYear();
-    renderMobileWeek();
-  } else if (currentView === 'day') {
-    if(monthEl) monthEl.textContent = MONTHS[viewDate.getMonth()]+' '+viewDate.getDate()+', ';
-    if(yearEl)  yearEl.textContent  = viewDate.getFullYear();
-    renderMobileDay();
-  }
-}
+  update();
+})();
 
-// MOBILE WEEK
-function renderMobileWeek() {
-  const ag = document.getElementById('mob-agenda'); if(!ag) return; ag.innerHTML='';
-  const start = new Date(viewDate); start.setDate(viewDate.getDate()-viewDate.getDay());
-  const td = todayStr();
-
-  // Scrollable week grid
-  const scroll = document.createElement('div'); scroll.className='mob-week-scroll';
-  const grid   = document.createElement('div'); grid.className='mob-week-grid';
-
-  // Corner
-  const corner = document.createElement('div'); corner.className='mob-wk-corner'; grid.appendChild(corner);
-
-  // Day headers
-  for(let d=0;d<7;d++){
-    const day=new Date(start.getTime()+d*86400000); const ds=dateStr(day);
-    const hdr=document.createElement('div'); hdr.className='mob-wk-day-hdr';
-    hdr.innerHTML='<div class="mob-wk-day-name">'+DAYS_SHORT[d]+'</div>'
-      +'<div class="mob-wk-day-num'+(ds===td?' today-num':'')+'">'+day.getDate()+'</div>';
-    hdr.onclick=()=>{viewDate=new Date(day);currentView='day';render();};
-    grid.appendChild(hdr);
-  }
-
-  // Time rows
-  for(let h=0;h<24;h++){
-    const tl=document.createElement('div'); tl.className='mob-wk-time';
-    tl.textContent=h===0?'12AM':h<12?h+'AM':h===12?'12PM':(h-12)+'PM';
-    grid.appendChild(tl);
-    for(let d=0;d<7;d++){
-      const day=new Date(start.getTime()+d*86400000); const ds=dateStr(day);
-      const cell=document.createElement('div'); cell.className='mob-wk-cell';
-      const hStr=String(h).padStart(2,'0')+':00';
-      cell.onclick=()=>openAddModal(ds,hStr);
-      eventsFor(ds).filter(ev=>{
-        if(!ev.startTime||ev.startTime.trim()==='') return h===0;
-        return parseInt(ev.startTime.split(':')[0],10)===h;
-      }).forEach(ev=>{
-        const ch=document.createElement('div'); ch.className='mob-wk-chip c'+colorIdx(ev);
-        ch.textContent=(ev.startTime?ev.startTime+' ':'')+ev.title;
-        ch.onclick=e=>{e.stopPropagation();openEditModal(ev.id);};
-        cell.appendChild(ch);
-      });
-      grid.appendChild(cell);
-    }
-  }
-  scroll.appendChild(grid); ag.appendChild(scroll);
-
-  // Scroll to 7am
-  requestAnimationFrame(()=>{ scroll.scrollTop = 7*43; });
-}
-
-// MOBILE DAY
-function renderMobileDay() {
-  const ag = document.getElementById('mob-agenda'); if(!ag) return; ag.innerHTML='';
-  const ds = dateStr(viewDate);
-  const allEvs = eventsFor(ds).sort((a,b)=>(a.startTime||'').localeCompare(b.startTime||''));
-  const timed  = allEvs.filter(ev=>ev.startTime&&ev.startTime.trim()!=='');
-  const allDay = allEvs.filter(ev=>!ev.startTime||ev.startTime.trim()==='');
-
-  // Add button row
-  const addRow=document.createElement('div');
-  addRow.style.cssText='display:flex;justify-content:flex-end;padding:10px 14px 6px';
-  const addBtn=document.createElement('button');
-  addBtn.textContent='+ Add Event';
-  addBtn.style.cssText='background:none;border:1px solid var(--gold);color:var(--gold);font-size:11px;padding:6px 14px;border-radius:8px;font-family:inherit;font-weight:700';
-  addBtn.onclick=()=>openAddModal(ds); addRow.appendChild(addBtn); ag.appendChild(addRow);
-
-  // All-day events
-  if(allDay.length){
-    const sec=document.createElement('div'); sec.className='mob-day-section';
-    const hdr=document.createElement('div'); hdr.className='mob-day-hdr';
-    hdr.innerHTML='<span>All day</span>';
-    sec.appendChild(hdr);
-    allDay.forEach(ev=>{
-      const el=document.createElement('div'); el.className='mob-event';
-      el.innerHTML='<div class="mob-event-dot" style="background:'+COLOR_HEX[colorIdx(ev)]+'"></div>'
-        +'<div class="mob-event-body"><div class="mob-event-title">'+escH(ev.title)+'</div></div>';
-      el.onclick=()=>openEditModal(ev.id); sec.appendChild(el);
-    });
-    ag.appendChild(sec);
-  }
-
-  // Timeline
-  const timeline=document.createElement('div'); timeline.className='mob-day-timeline';
-  for(let h=0;h<24;h++){
-    const row=document.createElement('div'); row.className='mob-day-row';
-    const tl=document.createElement('div'); tl.className='mob-day-time';
-    tl.textContent=h===0?'12AM':h<12?h+'AM':h===12?'12PM':(h-12)+'PM';
-    const slot=document.createElement('div'); slot.className='mob-day-slot';
-    const hStr=String(h).padStart(2,'0')+':00';
-    slot.onclick=()=>openAddModal(ds,hStr);
-    timed.filter(ev=>parseInt(ev.startTime.split(':')[0],10)===h).forEach(ev=>{
-      const ch=document.createElement('div'); ch.className='mob-day-ev c'+colorIdx(ev);
-      ch.innerHTML='<div class="mob-day-ev-title">'+escH(ev.title)+'</div>'
-        +'<div class="mob-day-ev-meta">'+fmt12(ev.startTime)+(ev.endTime?' – '+fmt12(ev.endTime):'')+(ev.desc?' · '+escH(ev.desc):'')+'</div>';
-      ch.onclick=e=>{e.stopPropagation();openEditModal(ev.id);}; slot.appendChild(ch);
-    });
-    row.appendChild(tl); row.appendChild(slot); timeline.appendChild(row);
-  }
-  ag.appendChild(timeline);
-
-  // Empty state
-  if(!allEvs.length){
-    const em=document.createElement('div'); em.className='mob-empty';
-    em.style.padding='20px 16px'; em.textContent='No events. Tap + Add Event to create one.';
-    ag.insertBefore(em, timeline);
-  }
-
-  // Scroll to 7am
-  requestAnimationFrame(()=>{ ag.scrollTop = 7*52; });
-}
-
-// MOBILE AGENDA
-// MOBILE AGENDA (upcoming list)
-function renderMobile() {
-  const ag=document.getElementById('mob-agenda'); if(!ag)return; ag.innerHTML='';
-  const td=todayStr();
-
-  if (currentView === 'month') {
-    const y=viewDate.getFullYear(), mo=viewDate.getMonth();
-
-    // ONE grid for both headers + cells — guaranteed alignment
-    const grid=document.createElement('div');
-    grid.style.cssText='display:grid;grid-template-columns:repeat(7,1fr);gap:2px;padding:6px 8px 20px;';
-
-    // Day-of-week header row (7 cells, row 1)
-    ['S','M','T','W','T','F','S'].forEach((d,i)=>{
-      const dh=document.createElement('div');
-      dh.style.cssText='text-align:center;font-size:9px;font-weight:700;letter-spacing:1px;'
-        +'color:'+(i===0||i===6?'rgba(224,123,0,.55)':'var(--muted)')+';'
-        +'padding:4px 0 5px;text-transform:uppercase;';
-      dh.textContent=d; grid.appendChild(dh);
-    });
-
-    // Day cells
-    const firstDay=new Date(y,mo,1).getDay();
-    const dim=new Date(y,mo+1,0).getDate();
-    const cells=[];
-    for(let i=0;i<firstDay;i++) cells.push(null);
-    for(let d=1;d<=dim;d++) cells.push(d);
-    while(cells.length%7!==0) cells.push(null);
-
-    cells.forEach((d,idx)=>{
-      const cell=document.createElement('div');
-      if(!d){
-        cell.style.cssText='background:rgba(14,13,11,.4);border:1px solid rgba(240,165,0,.04);border-radius:8px;min-height:58px;';
-        grid.appendChild(cell); return;
-      }
-      const col=idx%7;
-      const ds=y+'-'+String(mo+1).padStart(2,'0')+'-'+String(d).padStart(2,'0');
-      const isToday=ds===td, isWknd=col===0||col===6;
-      cell.style.cssText='background:'+(isToday?'rgba(240,165,0,.07)':isWknd?'rgba(14,13,11,.7)':'var(--bg1)')+';'
-        +'border:1px solid '+(isToday?'var(--gold)':'var(--border)')+';border-radius:8px;'
-        +'min-height:58px;display:flex;flex-direction:column;padding:4px 3px 3px;cursor:pointer;';
-      cell.className='mob-cell-tap';
-
-      const num=document.createElement('div');
-      num.style.cssText='font-family:"DM Mono",monospace;font-size:12px;font-weight:700;'
-        +'display:flex;align-items:center;justify-content:center;'
-        +'width:22px;height:22px;border-radius:50%;margin-bottom:3px;flex-shrink:0;'
-        +(isToday?'background:var(--gold);color:var(--bg0);':'color:var(--muted);');
-      num.textContent=d; cell.appendChild(num);
-
-      const evs=eventsFor(ds);
-      if(evs.length){
-        const dotsWrap=document.createElement('div');
-        dotsWrap.style.cssText='display:flex;flex-wrap:wrap;gap:2px;padding:0 1px;overflow:hidden;';
-        evs.slice(0,3).forEach(ev=>{
-          const dot=document.createElement('div');
-          dot.style.cssText='width:5px;height:5px;border-radius:50%;background:'+COLOR_HEX[colorIdx(ev)]+';flex-shrink:0;';
-          dotsWrap.appendChild(dot);
-        });
-        cell.appendChild(dotsWrap);
-        if(evs.length>3){
-          const more=document.createElement('div');
-          more.style.cssText='font-size:8px;color:var(--muted);text-align:center;margin-top:1px;font-weight:700;';
-          more.textContent='+' +(evs.length-3); cell.appendChild(more);
-        }
-      }
-      cell.onclick=()=>{ viewDate=new Date(y,mo,d); currentView='day'; render(); };
-      grid.appendChild(cell);
-    });
-    ag.appendChild(grid);
-    return;
-  }
-
-  // Agenda view (default for non-month)
-  for(let i=0;i<21;i++){
-    const d=new Date(); d.setDate(d.getDate()+i);
-    const ds=dateStr(d);
-    const evs=eventsFor(ds).sort((a,b)=>(a.startTime||'').localeCompare(b.startTime||''));
-    if(i>4&&evs.length===0) continue;
-    const sec=document.createElement('div'); sec.className='mob-day-section';
-    const hdr=document.createElement('div');
-    hdr.className='mob-day-hdr'+(ds===td?' today-hdr':'');
-    hdr.textContent=i===0?'Today':i===1?'Tomorrow':d.toLocaleDateString('en-US',{weekday:'long',month:'short',day:'numeric'});
-    sec.appendChild(hdr);
-    if(!evs.length){const em=document.createElement('div');em.className='mob-empty';em.textContent='No events';sec.appendChild(em);}
-    else evs.forEach(ev=>{
-      const el=document.createElement('div'); el.className='mob-event';
-      el.innerHTML='<div class="mob-event-dot" style="background:'+COLOR_HEX[colorIdx(ev)]+'"></div>'
-        +'<div class="mob-event-body">'
-        +'<div class="mob-event-title">'+escH(ev.title)+'</div>'
-        +'<div class="mob-event-time">'+(ev.startTime||'All day')+(ev.endTime?' – '+ev.endTime:'')+'</div>'
-        +(ev.desc?'<div class="mob-event-desc">'+escH(ev.desc)+'</div>':'')
-        +'</div>';
-      el.onclick=()=>openEditModal(ev.id); sec.appendChild(el);
-    });
-    ag.appendChild(sec);
-  }
-}
-
-function escH(s){return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
-function show(id,d='block'){const e=document.getElementById(id);if(e)e.style.display=d;}
-function hide(id){const e=document.getElementById(id);if(e)e.style.display='none';}
-
-// ─── MODAL
-function openAddModal(date, time) {
-  editingId=null;
-  document.getElementById('modal-title-txt').textContent='New Event';
-  document.getElementById('btn-delete').style.display='none';
-  document.getElementById('ev-title').value='';
-  document.getElementById('ev-date').value=date||dateStr(viewDate);
-  document.getElementById('ev-start').value=time||'';
-  document.getElementById('ev-end').value='';
-  document.getElementById('ev-desc').value='';
-  document.getElementById('ev-color').value='0';
-  document.getElementById('modal-overlay').classList.remove('hidden');
-  setTimeout(()=>document.getElementById('ev-title').focus(),80);
-}
-
-function openEditModal(id) {
-  const ev=events.find(e=>e.id===id); if(!ev)return;
-  editingId=id;
-  document.getElementById('modal-title-txt').textContent='Edit Event';
-  document.getElementById('btn-delete').style.display='block';
-  document.getElementById('ev-title').value=ev.title||'';
-  document.getElementById('ev-date').value=ev.date||'';
-  document.getElementById('ev-start').value=ev.startTime||'';
-  document.getElementById('ev-end').value=ev.endTime||'';
-  document.getElementById('ev-desc').value=ev.desc||'';
-  document.getElementById('ev-color').value=String(ev.color||0);
-  document.getElementById('modal-overlay').classList.remove('hidden');
-  setTimeout(()=>document.getElementById('ev-title').focus(),80);
-}
-
-function closeModal(){document.getElementById('modal-overlay').classList.add('hidden');editingId=null;}
-function closeModalOutside(e){if(e.target===document.getElementById('modal-overlay'))closeModal();}
-
-async function saveEvent() {
-  const title=document.getElementById('ev-title').value.trim();
-  if(!title){document.getElementById('ev-title').focus();return;}
-  const ev={
-    id:editingId||Date.now().toString(36)+Math.random().toString(36).slice(2),
-    title, date:document.getElementById('ev-date').value,
-    startTime:document.getElementById('ev-start').value,
-    endTime:document.getElementById('ev-end').value,
-    desc:document.getElementById('ev-desc').value.trim(),
-    color:parseInt(document.getElementById('ev-color').value)
+// Preferred date: no past dates, and cap bookings a year out.
+(function(){
+  var d = document.getElementById('fDate');
+  if (!d) return;
+  var today = new Date();
+  var pad = function(n){ return String(n).padStart(2,'0'); };
+  var iso = function(dt){
+    return dt.getFullYear() + '-' + pad(dt.getMonth()+1) + '-' + pad(dt.getDate());
   };
-  if(editingId) events=events.map(e=>e.id===editingId?ev:e);
-  else events.push(ev);
-  await saveEvents(); closeModal(); render();
-}
-
-async function deleteEvent() {
-  if(!editingId)return;
-  if(!confirm('Delete this event?'))return;
-  events=events.filter(e=>e.id!==editingId);
-  await saveEvents(); closeModal(); render();
-}
-
-// ─── VOICE
-function primeTTS() {
-  // iOS requires speechSynthesis.speak() to be called synchronously inside
-  // a user gesture. We prime it here with a near-silent utterance every time
-  // the user taps mic or hits send — this keeps the audio session alive
-  // so the real response can play after the async API call completes.
-  if (!window.speechSynthesis) return;
-  window.speechSynthesis.cancel();
-  const u = new SpeechSynthesisUtterance('\u200B'); // zero-width space
-  u.volume = 0.01; u.rate = 10; u.lang = 'en-US';
-  window.speechSynthesis.speak(u);
-  ttsUnlocked = true;
-}
-
-function toggleListen() { isListening ? stopListen() : (primeTTS(), startListen()); }
-
-function startListen() {
-  if (isSpeaking) { speechSynthesis.cancel(); isSpeaking = false; }
-  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
-  if(!SR){showResponse('Voice needs Chrome (Android/Desktop) or Safari (iPhone).'); return;}
-  if(isListening) return;
-  recognition=new SR();
-  recognition.continuous=false; recognition.interimResults=true; recognition.lang='en-US';
-  recognition.onstart=()=>{isListening=true;setListenUI(true);setTranscript('');};
-  recognition.onend=()=>{isListening=false;setListenUI(false);recognition=null;};
-  let fired = false;
-  recognition.onresult=(e)=>{
-    const t=Array.from(e.results).map(r=>r[0].transcript).join('');
-    setTranscript(t);
-    if(e.results[e.results.length-1].isFinal && !fired && !isSpeaking) {
-      fired = true;
-      recognition.stop(); // stop immediately so it can't fire again
-      processVoice(t);
-    }
-  };
-  recognition.onerror=(e)=>{
-    isListening=false;setListenUI(false);
-    let msg = '';
-    if(e.error==='network'){
-      msg = 'Voice is unavailable right now. Please type your command instead.';
-    } else if(e.error==='not-allowed'){
-      msg = 'Microphone access was denied. Please allow microphone access in your browser settings.';
-    } else if(e.error!=='no-speech'){
-      msg = 'Microphone error. Please try typing your command instead.';
-    }
-    if (msg) { speak(msg); showResponseRaw(msg); }
-  };
-  try { recognition.start(); } catch(err) {
-    const msg = 'Could not start the microphone. Please try typing instead.';
-    speak(msg); showResponseRaw(msg);
-  }
-}
-
-function stopListen(){if(recognition)recognition.stop();isListening=false;setListenUI(false);}
-
-function setListenUI(on) {
-  const oo=document.getElementById('orb-outer');
-  const ob=document.getElementById('orb-btn');
-  const oi=document.getElementById('orb-icon');
-  const os=document.getElementById('orb-status');
-  const wv=document.getElementById('wave');
-  const mb=document.getElementById('mob-mic-btn');
-  if(oo) oo.classList.toggle('listening',on);
-  if(ob) ob.classList.toggle('active',on);
-  if(oi) oi.textContent=on?'🎙':(isProcessing?'⚙':'🎤');
-  if(os){os.textContent=on?'Listening…':(isProcessing?'Processing…':'Space bar or tap');os.className='orb-status'+(on?' on':isProcessing?' proc':'');}
-  if(wv) wv.classList.toggle('on',on);
-  if(mb) mb.classList.toggle('active',on);
-  const mt=document.getElementById('mob-mic-btn');
-  if(mt) mt.textContent=on?'🎙':'🎤';
-}
-
-function setTranscript(t) {
-  const el=document.getElementById('transcript-text');
-  const mob=document.getElementById('mob-transcript-lbl');
-  if(el){el.className=t?'transcript-txt':'transcript-ph';el.textContent=t||'Speak a command…';}
-  if(mob) mob.textContent=t||(isListening?'Listening…':'Tap mic to speak…');
-}
-
-function showResponseRaw(txt) {
-  const el  = document.getElementById('response-box');
-  const mob = document.getElementById('mob-response-lbl');
-  if (el)  el.innerHTML = `<div class="response-txt">${txt}</div>`;
-  if (mob) mob.textContent = txt.replace(/<[^>]*>/g,'');
-}
-
-const CMDS_DISPLAY = [
-  { icon:'➕', text:'Add [title] on [day] at [time]',          ex:'Add yoga on Monday at 7am' },
-  { icon:'➕', text:'Add [title] every Mon Wed Fri at [time]',  ex:'Add school every Mon Wed Fri at 9am' },
-  { icon:'➕', text:'Add [title] every [day] rest of month',    ex:'Add gym every Tuesday rest of month at 6pm' },
-  { icon:'🗑', text:'Delete [title] on [day]',                 ex:'Delete yoga on Monday' },
-  { icon:'🗑', text:'Delete all [title]',                      ex:'Delete all school' },
-  { icon:'↔️', text:'Move [title] from [day] to [day]',        ex:'Move dentist from Tuesday to Friday' },
-  { icon:'📋', text:"What's on today / tomorrow / this week",  ex:"What's on this week" },
-];
-
-const SPOKEN_HELP = "I can only accept specific commands. Say: Add an event, Delete an event, Move an event, or ask What's on today. Say a command to try again.";
-
-function showResponse(reply) {
-  const isHelp = reply.includes('can only accept') || reply.includes("couldn't understand") || reply.includes('specify');
-
-  // Spoken version — short and clear
-  if (isHelp) {
-    speak(SPOKEN_HELP);
-  } else {
-    // strip newlines for speech
-    speak(reply.replace(/•[^\n]*/g,'').replace(/\n/g,'. ').trim());
-  }
-
-  // Visual version
-  const el = document.getElementById('response-box');
-  const mob = document.getElementById('mob-response-lbl');
-
-  if (isHelp) {
-    // Show a command card
-    const html = `
-      <div style="font-size:11px;color:var(--gold);font-weight:700;letter-spacing:1px;margin-bottom:8px;text-transform:uppercase">I can only accept these commands</div>
-      ${CMDS_DISPLAY.map(c=>`
-        <div style="margin-bottom:6px;padding:5px 7px;background:var(--bg0);border-radius:5px;border:1px solid var(--border)">
-          <div style="font-size:11px;color:var(--text2);font-weight:600">${c.icon} ${c.text}</div>
-          <div style="font-size:10px;color:var(--muted);margin-top:1px;font-style:italic">"${c.ex}"</div>
-        </div>
-      `).join('')}
-    `;
-    if (el) el.innerHTML = `<div style="overflow-y:auto;max-height:100%;padding:2px">${html}</div>`;
-    const mob2 = document.getElementById('mob-response-lbl');
-    if (mob2) mob2.textContent = SPOKEN_HELP;
-  } else {
-    // Normal response — format nicely
-    const lines = reply.split('\n').filter(Boolean);
-    const htmlLines = lines.map(l => {
-      if (l.startsWith('•')) return `<div style="padding:3px 0;font-size:12px;color:var(--text2)">${l}</div>`;
-      if (l.endsWith('✓')) return `<div style="font-size:13px;font-weight:700;color:var(--gold2)">${l}</div>`;
-      return `<div style="font-size:12px;color:var(--text)">${l}</div>`;
-    }).join('');
-    const el  = document.getElementById('response-box');
-    const mob = document.getElementById('mob-response-lbl');
-    if (el)  el.innerHTML = `<div style="padding:2px">${htmlLines}</div>`;
-    if (mob) mob.textContent = reply.split('\n')[0];
-  }
-}
-
-function setProcessingUI(on) {
-  isProcessing=on;
-  const el=document.getElementById('response-box');
-  const oi=document.getElementById('orb-icon');
-  const os=document.getElementById('orb-status');
-  if(on&&el) el.innerHTML='<div class="proc-row"><div class="spin"></div>Processing…</div>';
-  if(oi) oi.textContent=on?'⚙':'🎤';
-  if(os){os.textContent=on?'Processing…':'Space bar or tap';os.className='orb-status'+(on?' proc':'');}
-}
-
-function runCmd(text){primeTTS();setTranscript(text);processVoice(text);}
-
-function sendTyped() {
-  const desktop = document.getElementById('cmd-input');
-  const mobile  = document.getElementById('mob-cmd-input');
-  const dVal = (desktop?.value || '').trim();
-  const mVal = (mobile?.value  || '').trim();
-  const text = dVal || mVal;
-  if (!text) return;
-  primeTTS(); // unlock iOS audio synchronously before the async API call
-  if (desktop) desktop.value = '';
-  if (mobile)  mobile.value  = '';
-  setTranscript(text);
-  processVoice(text);
-}
-
-// ─── DATE / TIME HELPERS
-function p2(n){ return String(n).padStart(2,'0'); }
-function makeDs(y,m,d){ return y+'-'+p2(m+1)+'-'+p2(d); }
-function todayDs(){ const n=new Date(); return makeDs(n.getFullYear(),n.getMonth(),n.getDate()); }
-function fmtDate(ds){
-  if(!ds) return '?';
-  const [y,m,d]=ds.split('-').map(Number);
-  return new Date(y,m-1,d).toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'});
-}
-function fmt12(t){
-  if(!t) return '';
-  const [h,m]=t.split(':').map(Number);
-  return (h%12||12)+(m?':'+p2(m):'')+(h>=12?'pm':'am');
-}
-
-// Parse any date the user says
-function parseDate(raw){
-  if(!raw) return null;
-  let s = raw.trim().toLowerCase();
-  const n = new Date(), y=n.getFullYear(), mo=n.getMonth(), d=n.getDate();
-  if(/today/.test(s))    return makeDs(y,mo,d);
-  if(/tomorrow/.test(s)) return makeDs(y,mo,d+1);
-
-  // Convert spoken ordinals → digits ("eleventh" → "11", "third" → "3")
-  const ordinals = {
-    first:1,second:2,third:3,fourth:4,fifth:5,sixth:6,seventh:7,eighth:8,
-    ninth:9,tenth:10,eleventh:11,twelfth:12,thirteenth:13,fourteenth:14,
-    fifteenth:15,sixteenth:16,seventeenth:17,eighteenth:18,nineteenth:19,
-    twentieth:20,twentyfirst:21,twentysecond:22,twentythird:23,
-    twentyfourth:24,twentyfifth:25,twentysixth:26,twentyseventh:27,
-    twentyeighth:28,twentyninth:29,thirtieth:30,thirtyfirst:31
-  };
-  s = s.replace(/twenty[\s-](first|second|third|fourth|fifth|sixth|seventh|eighth|ninth)/g,
-    (_,w) => 'twenty'+w);
-  for(const [word, num] of Object.entries(ordinals)){
-    s = s.replace(new RegExp('\\b'+word+'\\b','g'), num);
-  }
-  // Strip ordinal suffixes: 11th → 11, 3rd → 3, 22nd → 22
-  s = s.replace(/\b(\d{1,2})(st|nd|rd|th)\b/g, '$1');
-
-  const days=['sunday','monday','tuesday','wednesday','thursday','friday','saturday'];
-  const dshort=['sun','mon','tue','wed','thu','fri','sat'];
-
-  let wday = -1;
-  for(let i=0;i<7;i++){
-    if(s.includes(days[i]) || s.includes(dshort[i])){ wday=i; break; }
-  }
-
-  if(wday >= 0){
-    const isNext      = /\bnext\b/.test(s);
-    const isAfterNext = /after next|week after|following/.test(s);
-    let diff = (wday - n.getDay() + 7) % 7;
-    if(isAfterNext){ if(diff===0) diff=14; else diff+=14; }
-    else if(isNext){ if(diff===0) diff=7;  else diff+=7; }
-    else           { if(diff===0) diff=7; }
-    const t = new Date(y,mo,d+diff);
-    return makeDs(t.getFullYear(),t.getMonth(),t.getDate());
-  }
-
-  if(/^\d{4}-\d{2}-\d{2}$/.test(s)) return s;
-
-  // "march 15" or "15 march" or "the 15th of march"
-  const months=['january','february','march','april','may','june',
-                'july','august','september','october','november','december'];
-  for(let mi=0;mi<12;mi++){
-    const pat = new RegExp(
-      '\\b'+months[mi]+'\\b[^\\d]*(\\d{1,2})\\b' +
-      '|\\b(\\d{1,2})\\b[^\\d]*\\b'+months[mi]+'\\b'
-    );
-    const match = s.match(pat);
-    if(match){
-      const day = parseInt(match[1]||match[2]);
-      if(day >= 1 && day <= 31) return makeDs(y, mi, day);
-    }
-  }
-  return null;
-}
-
-// Parse any time the user says — "9 AM", "nine", "2:30 pm", "in the afternoon"
-function parseTime(raw){
-  if(!raw) return '';
-  const orig = raw.trim().toLowerCase();
-  const wordNums={one:1,two:2,three:3,four:4,five:5,six:6,seven:7,eight:8,nine:9,ten:10,eleven:11,twelve:12};
-
-  // Step 1: detect AM/PM BEFORE any stripping, using original string
-  const hasPM = /(\d|[a-z])\s*p\.?m\.?(\b|$)|afternoon|evening|tonight|night/.test(orig);
-  const hasAM = /(\d|[a-z])\s*a\.?m\.?(\b|$)|morning/.test(orig);
-
-  // Step 2: normalize — replace word numbers, strip all non-digit/colon chars
-  let s = orig.replace(/\b(one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve)\b/g, m=>wordNums[m]);
-  s = s.replace(/[^0-9:]/g,'').trim();
-
-  // Step 3: parse
-  const m24 = s.match(/^(\d{1,2}):(\d{2})$/);
-  if(m24){
-    let h=parseInt(m24[1]), mn=parseInt(m24[2]);
-    if(hasPM && h!==12) h+=12;
-    else if(hasAM && h===12) h=0;
-    return p2(h)+':'+p2(mn);
-  }
-  const bare = s.match(/^(\d{1,2})$/);
-  if(bare){
-    let h=parseInt(bare[1]);
-    if(hasPM && h!==12) h+=12;
-    else if(hasAM && h===12) h=0;
-    else if(!hasPM && !hasAM && h>=1 && h<=6) h+=12; // only 1–6 ambiguous → PM
-    return p2(h)+':00';
-  }
-  return '';
-}
-
-// Robust time extractor — handles all speech recognition variants
-function extractTime(raw){
-  if(!raw) return '';
-  const s = raw.trim().toLowerCase();
-  // Try full string first
-  const direct = parseTime(s);
-  if(direct) return direct;
-  // Tokenize — longer patterns first so "2:30 pm" beats bare "2"
-  const tokens = s.match(
-    /\d{1,2}:\d{2}\s*(?:am|pm)\b|\d{1,2}:\d{2}|\d{1,2}\s*(?:am|pm)\b|(?:one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve)\s*(?:o'?clock)?\s*(?:am|pm\b|in the morning|in the afternoon|in the evening|at night)?/gi
-  ) || [];
-  for(const tok of tokens){
-    const p = parseTime(tok);
-    if(p) return p;
-  }
-  return '';
-}
-// Only 3 commands: ADD / DELETE / MOVE
-// One question per step. Mic auto-fires after each question.
-
-let dlg     = null;   // current step name, null = idle
-let pending = {};     // data collected so far
-
-function say(msg, cb){
-  showResponseRaw(msg);
-  if(cb) speakThen(msg, cb);
-  else speak(msg);
-}
-
-function ask(question, hint){
-  const display = hint
-    ? question + '<br><span style="font-size:10px;color:var(--muted);font-style:italic">' + hint + '</span>'
-    : question;
-  showResponseRaw(display);
-  speakThen(question, ()=>{ setTimeout(()=>{ primeTTS(); startListen(); }, 150); });
-  setStatus('ok','Listening…');
-}
-
-function cancel(msg){
-  // stop mic immediately
-  stopListen();
-  // clear all dialog state
-  dlg = null; pending = {};
-  // speak without triggering mic — use plain speak(), not say()/speakThen()
-  const m = msg || "Cancelled. Say add event or delete event whenever you're ready.";
-  showResponseRaw(m);
-  speak(m);
-  setStatus('ok', 'Ready');
-}
-
-// Entry point — every voice/text input comes here
-async function processVoice(text){
-  if(!text.trim()) return;
-  const t = text.trim().toLowerCase();
-
-  // Global cancel — stop mic immediately and reset
-  if(/^(cancel|stop|never mind|quit|exit)$/.test(t)){ stopListen(); cancel(); return; }
-
-  // Questions can be asked at ANY point — even mid-dialog
-  // Detect a query: starts with question words or contains insight keywords
-  const isQuery = /^(what|how|when|do i|am i|show|list|any)\b/.test(t) ||
-                  /\b(how many|how much|this week|today|tomorrow|schedule|busiest|next event|am i free|do i have)\b/.test(t);
-
-  if(isQuery && dlg){
-    // Answer without disrupting the active dialog
-    const result = await queryEvents(t);
-    // Show answer but remind user what step they were on
-    const stepHints = {
-      del_date:       "When you're ready, say the date of the event to delete.",
-      del_name:       `When you're ready, say which event on ${fmtDate(pending.date)} to delete, or say "delete all".`,
-      del_confirm:    `When you're ready, say yes to delete ${pending.title} or no to cancel.`,
-      del_all_confirm:`When you're ready, say yes to delete all events on ${fmtDate(pending.date)} or no to cancel.`,
-      add_date:       "When you're ready, say the date for the new event.",
-      add_name:       `When you're ready, say the name of the event on ${fmtDate(pending.date)}.`,
-      add_time:       "When you're ready, say the start time.",
-      add_endtime:    "When you're ready, say the end time or say no end time.",
-      add_location:   "When you're ready, say the location or say no location.",
-      edit_date:      "When you're ready, say the date of the event to edit.",
-      edit_name:      `When you're ready, say the name of the event on ${fmtDate(pending.date)} to edit.`,
-      edit_field:     `When you're ready, say name, date, time, or location.`,
-      edit_value:     `When you're ready, say the new ${pending.field||'value'}.`,
-    };
-    const hint = stepHints[dlg] || "Say cancel to stop, or continue your command.";
-    say(result + ' ... ' + hint);
-    // Re-fire mic so user can continue
-    setTimeout(()=>{ primeTTS(); startListen(); }, 300);
-    setTimeout(()=>render(), 200);
-    return;
-  }
-
-  // Route to active step or detect new command
-  if(dlg && STEPS[dlg]){
-    await STEPS[dlg](text.trim());
-  } else {
-    await STEPS.detect(text.trim());
-  }
-  setTimeout(()=>render(), 200);
-}
-
-const STEPS = {
-
-  // ── DETECT: figure out which command the user wants
-  async detect(text){
-    const t = text.toLowerCase();
-    if(/\b(add|schedule|create|new)\b/.test(t)){
-      pending = {};
-      dlg = 'add_date';
-      ask("What date is the event?", 'Say a day like Monday, or March 15, or tomorrow.');
-      return;
-    }
-    if(/\b(delete|remove|erase)\b/.test(t)){
-      pending = {};
-      dlg = 'del_date';
-      ask("What date is the event you want to delete?", 'Say a day like Monday or March 15.');
-      return;
-    }
-    if(/\b(edit|update|change|modify|rename)\b/.test(t)){
-      pending = {};
-      dlg = 'edit_date';
-      ask("Edit event on which date?", 'Say a day like Monday or March 15.');
-      return;
-    }
-    if(/\b(what|show|today|tomorrow|week|schedule|how many|how much|when|count|busiest|next event|do i have|am i free)\b/.test(t)){
-      const result = await queryEvents(t);
-      say(result);
-      return;
-    }
-    say("Say add event or delete event. Tap the speaker button to hear all commands.");
-  },
-
-  // ════ ADD FLOW: date → name → time → location ════
-
-  add_date(text){
-    const ds = parseDate(text);
-    if(!ds){ ask("I didn't catch the date. Say something like Monday, March 15, or tomorrow."); return; }
-    pending.date = ds;
-    dlg = 'add_name';
-    ask("What is the name of the event?");
-  },
-
-  add_name(text){
-    const name = text.replace(/\b(event|an|a|the)\b/gi,'').trim();
-    if(!name){ ask("What should I call this event?"); return; }
-    pending.title = name.charAt(0).toUpperCase() + name.slice(1);
-    dlg = 'add_time';
-    ask("What time does it start?", 'Say a time like 9 AM or 2:30 PM, or say "no time".');
-  },
-
-  add_time(text){
-    const t = text.toLowerCase();
-    if(/no time|skip|all.?day|none/.test(t)){
-      pending.startTime = '';
-      pending.endTime   = '';
-      dlg = 'add_location';
-      ask("What is the location?", 'Say an address or place name, or say "no location".');
-      return;
-    }
-    const parsed = extractTime(text);
-    if(!parsed){ ask("I didn't catch the time. Say something like 9 AM, 2:30 PM, or no time."); return; }
-    pending.startTime = parsed;
-    dlg = 'add_endtime';
-    ask(`Got it, ${fmt12(parsed)}. What time does it end?`, 'Say an end time, or say "no end time".');
-  },
-
-  add_endtime(text){
-    const t = text.toLowerCase();
-    if(/no end|skip|none|open/.test(t)){
-      pending.endTime = '';
-    } else {
-      const parsed = extractTime(text);
-      if(!parsed){ ask("I didn't catch the end time. Say a time like 10 AM, or say no end time."); return; }
-      pending.endTime = parsed;
-    }
-    dlg = 'add_location';
-    ask("What is the location?", 'Say an address or place name, or say "no location".');
-  },
-
-  add_location(text){
-    const t = text.toLowerCase().trim();
-    pending.location = /no location|skip|none|no place/.test(t) ? '' : text.trim();
-    // SAVE
-    events.push({
-      id: Date.now().toString(36)+Math.random().toString(36).slice(2),
-      title: pending.title,
-      date:  pending.date,
-      startTime: pending.startTime||'',
-      endTime:   pending.endTime||'',
-      desc: pending.location||'',
-      color: events.length % 6
-    });
-    saveEvents();
-    const p=pending.date.split('-'); viewDate=new Date(+p[0],+p[1]-1,1);
-    render();
-    const timeStr = pending.startTime
-      ? ' at '+fmt12(pending.startTime)+(pending.endTime?' – '+fmt12(pending.endTime):'')
-      : '';
-    const locStr = pending.location ? ', at '+pending.location : '';
-    const msg = `Added! ${pending.title} on ${fmtDate(pending.date)}${timeStr}${locStr}.`;
-    dlg=null; pending={};
-    say(msg);
-  },
-
-  // ════ DELETE FLOW: date → name or "all" → confirm ════
-
-  del_date(text){
-    const ds = parseDate(text);
-    if(!ds){ ask("I didn't catch the date. Say something like Monday or March 15."); return; }
-    const onDay = events.filter(e=>e.date===ds);
-    if(onDay.length===0){
-      say(`No events found on ${fmtDate(ds)}. Say delete to try again.`);
-      dlg=null; pending={}; return;
-    }
-    pending.date = ds;
-    if(onDay.length===1){
-      pending.eventId = onDay[0].id;
-      pending.title   = onDay[0].title;
-      dlg = 'del_confirm';
-      ask(`Delete ${onDay[0].title} on ${fmtDate(ds)}? Say yes to confirm or no to cancel.`);
-      return;
-    }
-    const names = onDay.map(e=>e.title).join(', ');
-    dlg = 'del_name';
-    ask(`Found ${onDay.length} events on ${fmtDate(ds)}: ${names}. Say an event name to delete one, or say "delete all" to remove all of them.`);
-  },
-
-  del_name(text){
-    const t = text.toLowerCase().trim();
-    // "all" → delete all events that day
-    if(/\ball\b/.test(t)){
-      const onDay = events.filter(e=>e.date===pending.date);
-      pending.deleteAll = true;
-      pending.deleteAllCount = onDay.length;
-      dlg = 'del_all_confirm';
-      ask(`Delete all ${onDay.length} events on ${fmtDate(pending.date)}? Say yes to confirm or no to cancel.`);
-      return;
-    }
-    const match = events.find(e=>e.date===pending.date && e.title.toLowerCase().includes(t));
-    if(!match){ ask("I didn't find that event. Say the event name, or say delete all to remove everything that day."); return; }
-    pending.eventId = match.id;
-    pending.title   = match.title;
-    dlg = 'del_confirm';
-    ask(`Delete ${match.title} on ${fmtDate(pending.date)}? Say yes to confirm or no to cancel.`);
-  },
-
-  async del_all_confirm(text){
-    const t = text.toLowerCase().trim();
-    if(/^(yes|yeah|yep|yup|sure|ok|confirm|delete|do it|go ahead)/.test(t)){
-      const count = events.filter(e=>e.date===pending.date).length;
-      events = events.filter(e=>e.date!==pending.date);
-      await saveEvents(); render();
-      const msg = `Deleted all ${count} events on ${fmtDate(pending.date)}.`;
-      dlg=null; pending={}; say(msg);
-    } else {
-      cancel("OK, nothing was deleted.");
-    }
-  },
-
-  async del_confirm(text){
-    const t = text.toLowerCase().trim();
-    if(/^(yes|yeah|yep|yup|sure|ok|confirm|delete|do it|go ahead)/.test(t)){
-      events = events.filter(e=>e.id!==pending.eventId);
-      await saveEvents(); render();
-      const msg = `Deleted. ${pending.title} on ${fmtDate(pending.date)} has been removed.`;
-      dlg=null; pending={}; say(msg);
-    } else {
-      cancel("OK, nothing was deleted.");
-    }
-  },
-
-  // ════ (move removed) ════
-
-  // ════ EDIT FLOW: date → name → field → new value ════
-
-  edit_date(text){
-    const ds = parseDate(text);
-    if(!ds){ ask("I didn't catch the date. Say something like Monday or March 15."); return; }
-    const onDay = events.filter(e=>e.date===ds);
-    if(!onDay.length){
-      say(`No events found on ${fmtDate(ds)}. Say edit to try again.`);
-      dlg=null; pending={}; return;
-    }
-    pending.date = ds;
-    if(onDay.length===1){
-      pending.eventId = onDay[0].id;
-      pending.title   = onDay[0].title;
-      dlg = 'edit_field';
-      ask(`Editing ${onDay[0].title} on ${fmtDate(ds)}. What do you want to change — name, date, time, or location?`);
-      return;
-    }
-    const names = onDay.map(e=>e.title).join(', ');
-    dlg = 'edit_name';
-    ask(`Found ${onDay.length} events on ${fmtDate(ds)}: ${names}. Which event do you want to edit?`);
-  },
-
-  edit_name(text){
-    const t = text.toLowerCase().trim();
-    const match = events.find(e=>e.date===pending.date && e.title.toLowerCase().includes(t));
-    if(!match){ ask("I didn't find that event. Say the event name again."); return; }
-    pending.eventId = match.id;
-    pending.title   = match.title;
-    dlg = 'edit_field';
-    ask(`Editing ${match.title}. What do you want to change — name, date, time, or location?`);
-  },
-
-  edit_field(text){
-    const t = text.toLowerCase().trim();
-    if(/\bname\b/.test(t)){
-      pending.field = 'name';
-      dlg = 'edit_value';
-      ask(`What should the new name be?`);
-    } else if(/\bdate\b/.test(t)){
-      pending.field = 'date';
-      dlg = 'edit_value';
-      ask(`What is the new date?`, 'Say a day like Friday or March 20.');
-    } else if(/\btime\b/.test(t)){
-      pending.field = 'startTime';
-      dlg = 'edit_value';
-      const ev = events.find(e=>e.id===pending.eventId);
-      ask(`What is the new time?`, ev && ev.startTime ? `Currently ${fmt12(ev.startTime)}.` : '');
-    } else if(/\blocation\b/.test(t)){
-      pending.field = 'location';
-      dlg = 'edit_value';
-      const ev = events.find(e=>e.id===pending.eventId);
-      ask(`What is the new location?`, ev && ev.desc ? `Currently ${ev.desc}.` : '');
-    } else {
-      ask(`Say name, date, time, or location — what would you like to change?`);
-    }
-  },
-
-  async edit_value(text){
-    const t = text.toLowerCase().trim();
-    const ev = events.find(e=>e.id===pending.eventId);
-    if(!ev){ cancel("Couldn't find that event. Try again."); return; }
-
-    let updated = {...ev};
-    let confirmMsg = '';
-
-    if(pending.field === 'name'){
-      const name = text.replace(/\b(event|an|a|the)\b/gi,'').trim();
-      if(!name){ ask("What should the new name be?"); return; }
-      updated.title = name.charAt(0).toUpperCase() + name.slice(1);
-      confirmMsg = `Done! Renamed to ${updated.title}.`;
-
-    } else if(pending.field === 'date'){
-      const ds = parseDate(text);
-      if(!ds){ ask("I didn't catch that date. Say something like Friday or March 20."); return; }
-      updated.date = ds;
-      confirmMsg = `Done! Moved to ${fmtDate(ds)}.`;
-
-    } else if(pending.field === 'startTime'){
-      if(/no time|skip|remove|none/.test(t)){ updated.startTime = ''; confirmMsg = `Done! Start time removed.`; }
-      else {
-        const parsed = extractTime(text);
-        if(!parsed){ ask("I didn't catch the time. Say something like 9 AM or 2:30 PM."); return; }
-        updated.startTime = parsed;
-        events = events.map(e=>e.id===pending.eventId ? updated : e);
-        await saveEvents(); render();
-        pending.field = 'endTime';
-        dlg = 'edit_value';
-        const curEnd = updated.endTime ? `Currently ${fmt12(updated.endTime)}.` : '';
-        ask(`Start time set to ${fmt12(parsed)}. What time does it end?`, curEnd || 'Say a time or say no end time.');
-        return;
-      }
-
-    } else if(pending.field === 'endTime'){
-      if(/no time|skip|remove|none/.test(t)){ updated.endTime = ''; confirmMsg = `Done! End time removed.`; }
-      else {
-        const parsed = extractTime(text);
-        if(!parsed){ ask("I didn't catch the time. Say something like 3 PM or 4:30 PM."); return; }
-        updated.endTime = parsed;
-        confirmMsg = `Done! End time set to ${fmt12(parsed)}.`;
-      }
-
-    } else if(pending.field === 'location'){
-      if(/no location|skip|remove|none/.test(t)){ updated.desc = ''; confirmMsg = `Done! Location removed.`; }
-      else { updated.desc = text.trim(); confirmMsg = `Done! Location set to ${updated.desc}.`; }
-    }
-
-    events = events.map(e=>e.id===pending.eventId ? updated : e);
-    await saveEvents(); render();
-    dlg=null; pending={};
-    say(confirmMsg);
-  },
-
-};
-
-// ── Query / Insights — simple queries answered locally, complex ones via Claude
-async function queryEvents(t){
-  const now = new Date();
-
-  // Simple date queries answered instantly without API
-  if(/\btoday\b/.test(t) && !/how many|count|busiest|next|when/.test(t)){
-    return localQuery([todayDs()], 'today');
-  }
-  if(/\btomorrow\b/.test(t) && !/how many|count/.test(t)){
-    const d=new Date(now); d.setDate(d.getDate()+1);
-    return localQuery([makeDs(d.getFullYear(),d.getMonth(),d.getDate())], 'tomorrow');
-  }
-  if(/this week|week/.test(t) && !/how many|count|busiest|next/.test(t)){
-    const dates=[];
-    for(let i=0;i<7;i++){const d=new Date(now);d.setDate(d.getDate()+i);dates.push(makeDs(d.getFullYear(),d.getMonth(),d.getDate()));}
-    return localQuery(dates,'this week');
-  }
-
-  // Complex insight questions → Claude with full event list
-  setStatus('sync','Thinking…');
-  try {
-    const evList = events.length
-      ? events.map(e=>`${e.date} ${e.startTime||'all-day'}${e.endTime?' – '+e.endTime:''} | ${e.title}${e.desc?' @ '+e.desc:''}`).join('\n')
-      : '(no events scheduled)';
-    const todayStr = now.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'});
-    const body = {
-      model:'claude-sonnet-4-20250514',
-      max_tokens:200,
-      system:`You are ARIA, a voice calendar assistant. Today is ${todayStr}.
-User's full event list:
-${evList}
-
-Answer in 1-2 short spoken sentences. Be specific with counts and dates. No markdown, no bullet points.`,
-      messages:[{role:'user',content:t}]
-    };
-    const res = await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
-    if(!res.ok) throw new Error('API error');
-    const data = await res.json();
-    setStatus('ok','Done');
-    return (data.content||[]).filter(b=>b.type==='text').map(b=>b.text).join('').trim() || "I couldn't find an answer.";
-  } catch(e) {
-    setStatus('err','Error');
-    return "Sorry, I couldn't look that up right now.";
-  }
-}
-
-function localQuery(dates, label){
-  const found = events.filter(e=>dates.includes(e.date))
-    .sort((a,b)=>a.date.localeCompare(b.date)||(a.startTime||'').localeCompare(b.startTime||''));
-  if(!found.length) return `Nothing scheduled ${label}.`;
-
-  const lines = found.map(e=>{
-    let s = fmtDate(e.date) + ' — ' + e.title;
-    if(e.startTime){ s += ', ' + fmt12(e.startTime); if(e.endTime) s += ' to ' + fmt12(e.endTime); }
-    if(e.desc) s += ', at ' + e.desc;
-    return s;
-  });
-  return `You have ${found.length} event${found.length>1?'s':''} ${label}. ` + lines.join('. ') + '.';
-}
-
-// ── Instructions (speaker button)
-const INSTRUCTIONS_TEXT = "ARIA accepts three commands plus calendar questions. Add event: I will ask for the date, name, start time, end time, and location. Edit event: I will ask for the date and event name, then ask what you want to change — name, date, time, or location. Delete event: I will ask for the date and name, then ask you to confirm before deleting. You can also ask any question about your calendar, like how many school days do I have this week, or what is my next event. Say cancel at any time to stop.";
-
-function speakInstructions(){
-  showResponseRaw(`
-    <div style="font-size:11px;color:var(--gold);font-weight:700;letter-spacing:1px;margin-bottom:8px;text-transform:uppercase">ARIA Commands</div>
-    <div style="margin-bottom:6px;padding:7px 9px;background:var(--bg0);border-radius:6px;border:1px solid var(--border)">
-      <div style="font-size:12px;color:var(--text2);font-weight:700">➕ Add Event</div>
-      <div style="font-size:10px;color:var(--muted);margin-top:2px;line-height:1.7">Date → Name → Start time → End time → Location</div>
-    </div>
-    <div style="margin-bottom:6px;padding:7px 9px;background:var(--bg0);border-radius:6px;border:1px solid var(--border)">
-      <div style="font-size:12px;color:var(--text2);font-weight:700">✏️ Edit Event</div>
-      <div style="font-size:10px;color:var(--muted);margin-top:2px;line-height:1.7">Date → Name → Field (name/date/time/location) → New value</div>
-    </div>
-    <div style="margin-bottom:6px;padding:7px 9px;background:var(--bg0);border-radius:6px;border:1px solid var(--border)">
-      <div style="font-size:12px;color:var(--text2);font-weight:700">🗑 Delete Event</div>
-      <div style="font-size:10px;color:var(--muted);margin-top:2px;line-height:1.7">Date → Name → Confirm yes/no</div>
-    </div>
-    <div style="padding:7px 9px;background:var(--bg0);border-radius:6px;border:1px solid var(--border)">
-      <div style="font-size:12px;color:var(--text2);font-weight:700">💬 Ask Anything</div>
-      <div style="font-size:10px;color:var(--muted);margin-top:2px;line-height:1.7">"How many school days this week?" • "What's my next event?" • "Am I free Thursday?"</div>
-    </div>
-    <div style="margin-top:8px;font-size:9px;color:var(--gold);text-align:center">Say "cancel" anytime to stop</div>
-  `);
-  speak(INSTRUCTIONS_TEXT);
-}
-
-async function applyAction(){}
-
-
-// ─── TTS
-let isSpeaking = false;
-let ttsUnlocked = false;
-let resumeTimer = null;
-
-function unlockTTS() {
-  if (ttsUnlocked || !window.speechSynthesis) return;
-  ttsUnlocked = true;
-  const u = new SpeechSynthesisUtterance(' ');
-  u.volume = 0; u.rate = 10;
-  window.speechSynthesis.speak(u);
-}
-// TTS unlocked per-gesture via primeTTS() — no passive listener needed
-
-function speak(text) {
-  if (!window.speechSynthesis) return;
-
-  // stop any resume heartbeat
-  if (resumeTimer) { clearInterval(resumeTimer); resumeTimer = null; }
-
-  window.speechSynthesis.cancel();
-  isSpeaking = false;
-
-  // iOS suspends synthesis after async — must resume before speaking
-  window.speechSynthesis.resume();
-
-  const u = new SpeechSynthesisUtterance(text.slice(0, 400));
-  u.rate = 1.0; u.pitch = 1.0; u.volume = 1.0; u.lang = 'en-US';
-
-  u.onstart = () => {
-    isSpeaking = true;
-    // iOS bug: pauses speech after ~15s — keep calling resume() as heartbeat
-    resumeTimer = setInterval(() => {
-      if (window.speechSynthesis.paused) window.speechSynthesis.resume();
-    }, 5000);
-  };
-  u.onend = () => {
-    isSpeaking = false;
-    if (resumeTimer) { clearInterval(resumeTimer); resumeTimer = null; }
-  };
-  u.onerror = (e) => {
-    isSpeaking = false;
-    if (resumeTimer) { clearInterval(resumeTimer); resumeTimer = null; }
-    console.warn('TTS error:', e.error);
-  };
-
-  const voices = window.speechSynthesis.getVoices();
-  const pref = voices.find(v =>
-    v.name === 'Samantha' ||
-    v.name === 'Karen' ||
-    v.name.includes('Google US English') ||
-    (v.lang && v.lang.startsWith('en') && v.localService)
-  );
-  if (pref) u.voice = pref;
-
-  window.speechSynthesis.speak(u);
-}
-
-async function forceSync() {
-  setStatus('sync', 'Syncing…');
-  await loadEvents();
-  render();
-  setStatus('ok', 'Synced ✓');
-  setTimeout(() => setStatus('ok', 'Ready'), 2000);
-}
-
-function speakThen(text, callback) {
-  if (!window.speechSynthesis) { if(callback) callback(); return; }
-  if (resumeTimer) { clearInterval(resumeTimer); resumeTimer = null; }
-  window.speechSynthesis.cancel();
-  isSpeaking = false;
-  window.speechSynthesis.resume();
-
-  const u = new SpeechSynthesisUtterance(text.slice(0, 300));
-  u.rate = 1.0; u.pitch = 1.0; u.volume = 1.0; u.lang = 'en-US';
-  u.onstart = () => { isSpeaking = true; };
-  u.onend = () => {
-    isSpeaking = false;
-    if (resumeTimer) { clearInterval(resumeTimer); resumeTimer = null; }
-    if (callback) callback();
-  };
-  u.onerror = () => {
-    isSpeaking = false;
-    if (resumeTimer) { clearInterval(resumeTimer); resumeTimer = null; }
-    if (callback) callback();
-  };
-  const voices = window.speechSynthesis.getVoices();
-  const pref = voices.find(v =>
-    v.name === 'Samantha' || v.name === 'Karen' ||
-    v.name.includes('Google US English') ||
-    (v.lang && v.lang.startsWith('en') && v.localService)
-  );
-  if (pref) u.voice = pref;
-  window.speechSynthesis.speak(u);
-}
-const notifiedIds = new Set(); // track what we've already notified about this session
-
-function requestNotifPermission() {
-  if (!('Notification' in window)) return;
-  if (Notification.permission === 'default') {
-    // ask after a short delay so it doesn't pop up immediately on load
-    setTimeout(() => {
-      Notification.requestPermission().then(p => {
-        if (p === 'granted') {
-          setStatus('ok', 'Notifications enabled ✓');
-          setTimeout(() => setStatus('ok', 'Ready'), 2000);
-        }
-      });
-    }, 3000);
-  }
-}
-
-function checkUpcomingEvents() {
-  if (!('Notification' in window)) return;
-  if (Notification.permission !== 'granted') return;
-
-  const now = new Date();
-  const todayStr2 = dateStr(now);
-  const tomorrowDate = new Date(now.getTime() + 86400000);
-  const tomorrowStr = dateStr(tomorrowDate);
-
-  // check today and tomorrow
-  [todayStr2, tomorrowStr].forEach(ds => {
-    eventsFor(ds).forEach(ev => {
-      if (!ev.startTime) return;
-      const [hh, mm] = ev.startTime.split(':').map(Number);
-      const evTime = new Date(ds.split('-')[0], ds.split('-')[1]-1, ds.split('-')[2], hh, mm);
-      const diffMs = evTime - now;
-      const diffMin = diffMs / 60000;
-
-      // fire at 15 min window (between 14 and 16 mins away)
-      const notifKey = ev.id + '_15min';
-      if (diffMin >= 14 && diffMin < 16 && !notifiedIds.has(notifKey)) {
-        notifiedIds.add(notifKey);
-        fireNotification(ev, 15);
-      }
-
-      // also fire at 5 min window
-      const notifKey5 = ev.id + '_5min';
-      if (diffMin >= 4 && diffMin < 6 && !notifiedIds.has(notifKey5)) {
-        notifiedIds.add(notifKey5);
-        fireNotification(ev, 5);
-      }
-    });
-  });
-}
-
-function fireNotification(ev, minsAway) {
-  const title = `⏰ ${minsAway} min: ${ev.title}`;
-  const body  = ev.startTime + (ev.endTime ? ' – ' + ev.endTime : '') +
-                (ev.desc ? '\n' + ev.desc : '');
-  const n = new Notification(title, {
-    body,
-    icon: 'https://placehold.co/192x192/f0a500/0e0d0b?text=A',
-    badge: 'https://placehold.co/96x96/f0a500/0e0d0b?text=A',
-    tag: ev.id + '_' + minsAway,   // prevents duplicate toasts
-    requireInteraction: minsAway <= 5  // stay on screen for 5-min alerts
-  });
-  n.onclick = () => {
-    window.focus();
-    // jump to the event's day
-    const parts = ev.date.split('-');
-    viewDate = new Date(parseInt(parts[0]), parseInt(parts[1])-1, parseInt(parts[2]));
-    setView('day', document.querySelector('[onclick*="day"]'), true);
-    n.close();
-  };
-  // also speak the alert if TTS is available
-  speak(`Heads up — ${ev.title} starts in ${minsAway} minutes.`);
-}
-
-// ─── STATUS
-function setStatus(state,msg){
-  const dot=document.getElementById('st-dot');
-  const txt=document.getElementById('st-txt');
-  if(dot){dot.className='st-dot';if(state==='err')dot.classList.add('err');if(state==='sync')dot.classList.add('sync');}
-  if(txt) txt.textContent=msg;
-}
+  d.min = iso(today);
+  var max = new Date(today.getTime());
+  max.setFullYear(max.getFullYear() + 1);
+  d.max = iso(max);
+})();
 </script>
+
 </body>
 </html>
