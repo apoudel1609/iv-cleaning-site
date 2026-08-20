@@ -384,10 +384,27 @@
             </div>
           </div>
 
+          <div class="field">
+            <label for="freq">How often</label>
+            <select id="freq">
+              <option value="once" selected>One-time clean</option>
+              <option value="monthly">Monthly — save 5%</option>
+              <option value="biweekly">Every 2 weeks — save 10%</option>
+              <option value="weekly">Weekly — save 15%</option>
+            </select>
+          </div>
+
           <label class="toggle">
             <input type="checkbox" id="deep">
             <span>Deep clean
-              <small>First-time, move-in/out, or post-renovation. Adds extra time for baseboards, appliances &amp; buildup.</small>
+              <small>First-time, move-in/out, or post-renovation. Adds time for baseboards, appliances, and Louisiana humidity buildup in kitchens and baths.</small>
+            </span>
+          </label>
+
+          <label class="toggle" id="linenWrap" style="display:none">
+            <input type="checkbox" id="linens">
+            <span>Linens &amp; restocking
+              <small>Wash and change bed linens and towels, restock paper goods and soap between guests.</small>
             </span>
           </label>
         </div>
@@ -403,6 +420,8 @@
           <div class="rc-line"><span>Service</span><span id="rcService">Standard clean</span></div>
           <div class="rc-line"><span>Estimated time</span><span id="rcHours">—</span></div>
           <div class="rc-line"><span>Rate</span><span>$25 / hour</span></div>
+          <div class="rc-line"><span>Schedule</span><span id="rcFreq">One-time</span></div>
+          <div class="rc-line" id="rcDiscRow" style="display:none"><span>Recurring discount</span><span id="rcDisc">—</span></div>
           <div class="rc-total">
             <span class="label">Estimated total</span>
             <span class="amount" id="rcTotal">$—</span>
@@ -515,54 +534,95 @@
 (function(){
   var RATE = 25; // $ per hour
 
-  // Hours per square foot by property type.
-  // Baseline: a 1,000 sq ft house takes 8 hours => 0.008 hr/sq ft.
-  var HOURS_PER_SQFT = {
-    house: 0.008,
-    apartment: 0.0075, // simpler single-level layouts
-    office: 0.006,     // more open floor space
-    hotel: 0.007       // turnover-style cleans
+  // Hours per square foot, tapered. The first 1,000 sq ft takes the most time
+  // per foot (kitchen + baths are the slow rooms); space beyond that is mostly
+  // floors and surfaces, so it bills at a lower rate.
+  // Anchor: 1,000 sq ft house, 2 baths = 6.5 + 1.5 = 8 hrs = $200.
+  var TYPES = {
+    house:     { base:0.0065, taper:0.0045, bath:0.75 },
+    apartment: { base:0.0055, taper:0.0040, bath:0.75 },
+    office:    { base:0.0040, taper:0.0030, bath:0.60 },
+    hotel:     { base:0.0035, taper:0.0028, bath:0.75 }
   };
+  var TAPER_AT = 1000;     // sq ft above this bills at the taper rate
   var TYPE_LABELS = {
     house: "House",
     apartment: "Apartment / Condo",
     office: "Office",
     hotel: "Hotel / Rental"
   };
-  var BATH_HOURS = 0.75;   // extra time per bathroom (~$18.75 each)
-  var DEEP_MULT = 1.35;    // deep-clean multiplier
+  var DEEP_MULT = 1.45;    // deep / move-out cleans
+  var LINEN_HOURS = 1.0;   // laundry, linens & restocking on turnovers
   var MIN_HOURS = 4;       // minimum visit
+  var FREQ = {             // recurring-visit discounts
+    once:     {mult:1.00, label:"One-time"},
+    monthly:  {mult:0.95, label:"Monthly"},
+    biweekly: {mult:0.90, label:"Every 2 weeks"},
+    weekly:   {mult:0.85, label:"Weekly"}
+  };
 
   var ptype = document.getElementById('ptype');
   var sqft = document.getElementById('sqft');
   var sqftOut = document.getElementById('sqftOut');
   var bathOut = document.getElementById('bathOut');
   var deep = document.getElementById('deep');
+  var freqSel = document.getElementById('freq');
+  var linens = document.getElementById('linens');
+  var linenWrap = document.getElementById('linenWrap');
   var baths = 1;
 
   function fmtSqft(v){ return Number(v).toLocaleString() + " sq ft"; }
 
   function update(){
-    var hours = Number(sqft.value) * HOURS_PER_SQFT[ptype.value] + baths * BATH_HOURS;
+    var t = TYPES[ptype.value];
+    var sf = Number(sqft.value);
+    var isTurnover = (ptype.value === 'hotel');
+
+    // Tapered floor area
+    var hours = Math.min(sf, TAPER_AT) * t.base;
+    if (sf > TAPER_AT) hours += (sf - TAPER_AT) * t.taper;
+
+    hours += baths * t.bath;
+    if (isTurnover && linens.checked) hours += LINEN_HOURS;
     if (deep.checked) hours *= DEEP_MULT;
+
     hours = Math.max(hours, MIN_HOURS);
     hours = Math.round(hours * 2) / 2; // nearest half hour
 
-    var price = Math.round((hours * RATE) / 5) * 5; // nearest $5
+    var freq = FREQ[freqSel.value];
+    var price = Math.round((hours * RATE * freq.mult) / 5) * 5; // nearest $5
 
-    sqftOut.textContent = fmtSqft(sqft.value);
+    // Show/hide the turnover-only option
+    linenWrap.style.display = isTurnover ? 'flex' : 'none';
+
+    sqftOut.textContent = fmtSqft(sf);
     bathOut.textContent = baths;
+
+    var service = deep.checked ? "Deep clean" : "Standard clean";
+    if (isTurnover && linens.checked) service += " + linens";
+
     document.getElementById('rcType').textContent = TYPE_LABELS[ptype.value];
-    document.getElementById('rcSize').textContent = fmtSqft(sqft.value);
+    document.getElementById('rcSize').textContent = fmtSqft(sf);
     document.getElementById('rcBaths').textContent = baths;
-    document.getElementById('rcService').textContent = deep.checked ? "Deep clean" : "Standard clean";
+    document.getElementById('rcService').textContent = service;
     document.getElementById('rcHours').textContent = "~" + hours + (hours === 1 ? " hour" : " hours");
+    document.getElementById('rcFreq').textContent = freq.label;
+
+    var discRow = document.getElementById('rcDiscRow');
+    if (freq.mult < 1){
+      discRow.style.display = 'flex';
+      document.getElementById('rcDisc').textContent =
+        "−" + Math.round((1 - freq.mult) * 100) + "%";
+    } else {
+      discRow.style.display = 'none';
+    }
+
     document.getElementById('rcTotal').textContent = "$" + price.toLocaleString();
 
     // Pass the estimate into the intake form so Isabel sees it in the email
     document.getElementById('estimateField').value =
-      TYPE_LABELS[ptype.value] + ", " + fmtSqft(sqft.value) + ", " + baths +
-      " bath(s), " + (deep.checked ? "deep clean" : "standard clean") +
+      TYPE_LABELS[ptype.value] + ", " + fmtSqft(sf) + ", " + baths +
+      " bath(s), " + service.toLowerCase() + ", " + freq.label.toLowerCase() +
       " — approx. " + hours + " hrs, estimated $" + price;
 
     // Keep the booking form's property type in sync
@@ -573,6 +633,8 @@
   ptype.addEventListener('change', update);
   sqft.addEventListener('input', update);
   deep.addEventListener('change', update);
+  freqSel.addEventListener('change', update);
+  linens.addEventListener('change', update);
   document.getElementById('bathMinus').addEventListener('click', function(){
     baths = Math.max(0, baths - 1); update();
   });
