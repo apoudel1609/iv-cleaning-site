@@ -475,7 +475,7 @@
         <div class="form-row">
           <div>
             <label for="fEmail">Email <span class="req">*</span></label>
-            <input id="fEmail" name="Email" type="email" required autocomplete="email" placeholder="you@email.com">
+            <input id="fEmail" name="email" type="email" required autocomplete="email" placeholder="you@email.com">
           </div>
           <div>
             <label for="fDate">Preferred date</label>
@@ -650,15 +650,40 @@
 (function(){
   var d = document.getElementById('fDate');
   if (!d) return;
-  var today = new Date();
   var pad = function(n){ return String(n).padStart(2,'0'); };
   var iso = function(dt){
     return dt.getFullYear() + '-' + pad(dt.getMonth()+1) + '-' + pad(dt.getDate());
   };
-  d.min = iso(today);
+  var today = new Date();
+  var minStr = iso(today);
   var max = new Date(today.getTime());
   max.setFullYear(max.getFullYear() + 1);
+
+  d.min = minStr;
   d.max = iso(max);
+  d.setAttribute('min', minStr);
+  d.setAttribute('max', iso(max));
+
+  function check(){
+    if (d.value && d.value < d.min){
+      d.setCustomValidity("Please choose today or a future date.");
+      d.value = "";
+      d.reportValidity();
+      return false;
+    }
+    d.setCustomValidity("");
+    return true;
+  }
+
+  d.addEventListener('change', check);
+  d.addEventListener('input', check);
+
+  var form = d.closest('form');
+  if (form){
+    form.addEventListener('submit', function(e){
+      if (!check()) e.preventDefault();
+    });
+  }
 })();
 </script>
 
